@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', Create::class)->name('home');
 
+Route::get('/locale/{locale}', function (string $locale) {
+    if (in_array($locale, ['en', 'ar'], true)) {
+        session()->put('locale', $locale);
+    }
+
+    return redirect()->back();
+})->name('locale.switch');
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', Login::class)->name('login');
     Route::get('/register', Register::class)->name('register');
