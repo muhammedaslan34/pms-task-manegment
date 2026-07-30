@@ -1,0 +1,62 @@
+<?php
+
+namespace App\Livewire\Admin;
+
+use App\Enums\TaskStatus;
+use App\Livewire\Forms\TaskStatusForm;
+use App\Models\Task;
+use Livewire\Attributes\Layout;
+use Livewire\Component;
+
+class TaskShow extends Component
+{
+    public Task $task;
+    public TaskStatusForm $form;
+
+    public bool $confirmOpen = false;
+
+    public function mount(Task $task): void
+    {
+        $this->task = $task->load('assignee');
+        $this->form->setTask($task);
+    }
+
+    public function setInProgress(): void
+    {
+        $this->form->status = TaskStatus::InProgress->value;
+        $this->form->assign_to_me = true;
+        $this->save();
+    }
+
+    public function markCompleted(): void
+    {
+        $this->form->status = TaskStatus::Completed->value;
+        $this->confirmOpen = true;
+    }
+
+    public function reopen(): void
+    {
+        $this->form->status = TaskStatus::Pending->value;
+        $this->save();
+    }
+
+    public function closeConfirm(): void
+    {
+        $this->confirmOpen = false;
+    }
+
+    public function save(): void
+    {
+        $this->form->save(auth()->id());
+        $this->task->refresh()->load('assignee');
+        $this->form->setTask($this->task);
+        $this->confirmOpen = false;
+        session()->flash('status', 'Task updated.');
+    }
+
+    #[Layout('components.layouts.app')]
+    public function render()
+    {
+        return view('livewire.admin.task-show')->title('#' . $this->task->id . ' · ' . $this->task->title);
+    }
+}
