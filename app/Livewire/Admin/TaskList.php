@@ -65,7 +65,7 @@ class TaskList extends Component
 
     public function saveManage(): void
     {
-        $this->form->save(auth()->id());
+        $this->form->save($this->managing, auth()->id());
         $this->closeManage();
         $this->dispatch('task-updated');
         session()->flash('status', 'Task updated successfully.');

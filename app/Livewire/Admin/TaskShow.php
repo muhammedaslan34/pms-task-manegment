@@ -21,6 +21,16 @@ class TaskShow extends Component
         $this->form->setTask($task);
     }
 
+    public function updatedFormStatus(string $value): void
+    {
+        if ($value === TaskStatus::Completed->value && empty($this->form->resolution_note)) {
+            $this->confirmOpen = true;
+            return;
+        }
+
+        $this->save();
+    }
+
     public function setInProgress(): void
     {
         $this->form->status = TaskStatus::InProgress->value;
@@ -43,11 +53,12 @@ class TaskShow extends Component
     public function closeConfirm(): void
     {
         $this->confirmOpen = false;
+        $this->form->status = $this->task->status->value;
     }
 
     public function save(): void
     {
-        $this->form->save(auth()->id());
+        $this->form->save($this->task, auth()->id());
         $this->task->refresh()->load('assignee');
         $this->form->setTask($this->task);
         $this->confirmOpen = false;

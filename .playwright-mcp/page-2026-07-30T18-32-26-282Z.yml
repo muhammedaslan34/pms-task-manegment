@@ -1,0 +1,75 @@
+- generic [active] [ref=f1e1]:
+  - banner [ref=f1e2]:
+    - generic [ref=f1e3]:
+      - link "TaskFlow" [ref=f1e4] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=f1e9]:
+        - link "Submit Task" [ref=f1e10] [cursor=pointer]:
+          - /url: /
+        - link "Support Login" [ref=f1e11] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/login
+  - main [ref=f1e13]:
+    - generic [ref=f1e15]:
+      - generic [ref=f1e16]:
+        - generic [ref=f1e17]:
+          - heading "Report an issue" [level=1] [ref=f1e18]
+          - paragraph [ref=f1e19]: Found a bug or something that needs fixing? Tell us about it and we'll get on it.
+        - generic [ref=f1e20]:
+          - generic [ref=f1e21]:
+            - generic [ref=f1e22]: Title *
+            - textbox "Title *" [ref=f1e23]:
+              - /placeholder: e.g. Login button doesn't respond on click
+          - generic [ref=f1e24]:
+            - generic [ref=f1e25]: Page link (URL) (optional)
+            - textbox "Page link (URL) (optional)" [ref=f1e26]:
+              - /placeholder: https://yoursite.com/problem-page
+          - generic [ref=f1e27]:
+            - generic [ref=f1e28]: Description
+            - textbox "Description" [ref=f1e29]:
+              - /placeholder: Describe what happened, what you expected, and steps to reproduce it...
+          - generic [ref=f1e30]:
+            - generic [ref=f1e31]: Priority *
+            - generic [ref=f1e32]:
+              - generic [ref=f1e33] [cursor=pointer]:
+                - radio "Low" [ref=f1e34]
+                - text: Low
+              - generic [ref=f1e35] [cursor=pointer]:
+                - radio "Medium" [checked] [ref=f1e36]
+                - text: Medium
+              - generic [ref=f1e37] [cursor=pointer]:
+                - radio "High" [ref=f1e38]
+                - text: High
+          - generic [ref=f1e39]:
+            - generic [ref=f1e40]: Screenshot
+            - generic [ref=f1e41] [cursor=pointer]:
+              - paragraph [ref=f1e44]: Click to upload, paste from clipboard, or drag & drop
+              - paragraph [ref=f1e45]: PNG, JPG, GIF up to 10MB
+          - generic [ref=f1e46]:
+            - generic [ref=f1e47]: Your email (optional)
+            - textbox "Your email (optional)" [ref=f1e48]:
+              - /placeholder: you@example.com
+          - button "Submit Task" [ref=f1e50]
+      - complementary [ref=f1e54]:
+        - generic [ref=f1e55]:
+          - heading "Tips for a good report" [level=2] [ref=f1e56]
+          - list [ref=f1e57]:
+            - listitem [ref=f1e58]: Include the exact page URL where the issue happens.
+            - listitem [ref=f1e61]:
+              - text: Paste a screenshot with
+              - generic [ref=f1e64]: Ctrl
+              - text: +
+              - generic [ref=f1e65]: V
+              - text: .
+            - listitem [ref=f1e66]: List the steps to reproduce the problem.
+        - generic [ref=f1e69]:
+          - heading "Priority guide" [level=2] [ref=f1e70]
+          - generic [ref=f1e71]:
+            - generic [ref=f1e72]:
+              - generic [ref=f1e73]: High
+              - generic [ref=f1e74]: Blocks work / data loss
+            - generic [ref=f1e75]:
+              - generic [ref=f1e76]: Medium
+              - generic [ref=f1e77]: Broken feature, workaround exists
+            - generic [ref=f1e78]:
+              - generic [ref=f1e79]: Low
+              - generic [ref=f1e80]: Minor / cosmetic

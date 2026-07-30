@@ -4,6 +4,8 @@ namespace App\Livewire\Tasks;
 
 use App\Enums\Priority;
 use App\Models\Task;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -18,6 +20,13 @@ class Create extends Component
     public string $priority = 'medium';
 
     public $screenshot = null;
+
+    public function mount(): void
+    {
+        if (Auth::check()) {
+            $this->submitted_by = Auth::user()->email;
+        }
+    }
 
     protected function rules(): array
     {
@@ -61,6 +70,9 @@ class Create extends Component
 
         $this->reset(['title', 'page_link', 'description', 'submitted_by', 'priority', 'screenshot']);
         $this->priority = 'medium';
+        if (Auth::check()) {
+            $this->submitted_by = Auth::user()->email;
+        }
 
         $this->dispatch('task-submitted');
         session()->flash('status', 'Your task has been submitted. Our support team will review it shortly.');
@@ -70,6 +82,6 @@ class Create extends Component
     {
         return view('livewire.tasks.create')
             ->layout('components.layouts.app')
-            ->title('Submit a Task');
+            ->title(__('Submit a Task'));
     }
 }

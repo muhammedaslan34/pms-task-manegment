@@ -67,6 +67,6 @@ class Login extends Component
     #[Layout('components.layouts.app')]
     public function render()
     {
-        return view('livewire.auth.login')->title('Support Login');
+        return view('livewire.auth.login')->title(__('Support Login'));
     }
 }

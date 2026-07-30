@@ -2,6 +2,7 @@
 
 use App\Livewire\Admin\TaskList;
 use App\Livewire\Admin\TaskShow;
+use App\Livewire\Admin\Users\Index as UsersIndex;
 use App\Livewire\Auth\Login;
 use App\Livewire\Tasks\Create;
 use Illuminate\Support\Facades\Route;
@@ -22,4 +23,5 @@ Route::post('/logout', function () {
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/tasks', TaskList::class)->name('tasks.index');
     Route::get('/tasks/{task}', TaskShow::class)->name('tasks.show');
+    Route::get('/users', UsersIndex::class)->name('users.index');
 });
