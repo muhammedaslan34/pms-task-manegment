@@ -80,7 +80,9 @@ class Create extends Component
 
     public function render()
     {
-        return view('livewire.tasks.create')
+        return view('livewire.tasks.create', [
+            'users' => Auth::guest() ? User::orderBy('name')->get() : collect(),
+        ])
             ->layout('components.layouts.app')
             ->title(__('Submit a Task'));
     }

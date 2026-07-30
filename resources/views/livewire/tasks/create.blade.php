@@ -122,9 +122,23 @@
                 <div>
                     <label for="submitted_by" class="block text-sm font-medium text-slate-700">{{ __('Your email') }}
                         <span class="font-normal text-slate-400">{{ __('(optional)') }}</span></label>
-                    <input id="submitted_by" type="email" wire:model="submitted_by"
-                        class="mt-2.5 block w-full rounded-lg border-slate-300 px-3.5 py-3 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                        placeholder="you@example.com">
+
+                    @auth
+                        <input id="submitted_by" type="email" wire:model="submitted_by" readonly
+                            class="mt-2.5 block w-full cursor-not-allowed rounded-lg border-slate-200 bg-slate-100 px-3.5 py-3 text-slate-500 shadow-sm"
+                            placeholder="you@example.com">
+                        <p class="mt-1.5 text-xs text-slate-400">{{ __('Signed in as :email', ['email' => auth()->user()->email]) }}</p>
+                    @else
+                        <select wire:model="submitted_by"
+                            class="mt-2.5 block w-full rounded-lg border-slate-300 px-3.5 py-3 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <option value="">{{ __('— Select a user (or leave blank) —') }}</option>
+                            @foreach ($users as $user)
+                                <option value="{{ $user->email }}">{{ $user->name }} ({{ $user->email }})</option>
+                            @endforeach
+                        </select>
+                        <p class="mt-1.5 text-xs text-slate-400">{{ __('Pick the account submitting this task.') }}</p>
+                    @endauth
+
                     @error('submitted_by')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
