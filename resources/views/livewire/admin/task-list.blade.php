@@ -35,31 +35,98 @@
         @endforeach
     </div>
 
-    <div class="mb-5 flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-        <div class="relative flex-1 sm:max-w-sm">
-            <svg class="pointer-events-none absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-            </svg>
-            <input type="text" wire:model.live.debounce.300ms="search" placeholder="{{ __('Search tasks...') }}"
-                class="w-full rounded-xl border-slate-300 py-2.5 ps-10 pe-3.5 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+    <div class="mb-5 flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-4 shadow-sm lg:flex-row lg:items-center lg:justify-between lg:gap-4">
+        <div class="relative flex-1 lg:max-w-sm">
+            <span class="pointer-events-none absolute inset-y-0 start-0 flex w-11 items-center justify-center text-slate-400">
+                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+            </span>
+            <input type="search" wire:model.live.debounce.300ms="search" placeholder="{{ __('Search tasks...') }}"
+                class="w-full rounded-xl border border-slate-200 bg-white py-2.5 pe-3.5 ps-11 text-sm shadow-sm placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30">
         </div>
 
-        <div class="flex flex-wrap items-center gap-3">
-            <select wire:model.live="priority"
-                class="rounded-xl border-slate-300 py-2.5 pe-8 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                <option value="all">{{ __('All priorities') }}</option>
-                @foreach (App\Enums\Priority::cases() as $p)
-                    <option value="{{ $p->value }}">{{ $p->label() }}</option>
-                @endforeach
-            </select>
+        <div class="flex flex-wrap items-center gap-2.5">
+            {{-- Priority filter --}}
+            <div x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="relative">
+                <button type="button" @click="open = !open"
+                    class="inline-flex min-w-[9.5rem] items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+                    <span>
+                        {{ $priority === 'all' ? __('All priorities') : \App\Enums\Priority::from($priority)->label() }}
+                    </span>
+                    <svg class="h-4 w-4 text-slate-400 transition" :class="open && 'rotate-180'" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div x-show="open" x-cloak x-transition.opacity.duration.100ms
+                    class="absolute start-0 z-30 mt-1.5 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white py-1.5 shadow-lg ring-1 ring-black/5">
+                    <button type="button" wire:click="$set('priority', 'all')" @click="open = false"
+                        class="flex w-full items-center gap-2.5 px-3.5 py-2 text-start text-sm transition {{ $priority === 'all' ? 'bg-blue-50 font-semibold text-blue-800' : 'text-slate-700 hover:bg-slate-50' }}">
+                        {{ __('All priorities') }}
+                    </button>
+                    @foreach (App\Enums\Priority::cases() as $p)
+                        <button type="button" wire:click="$set('priority', '{{ $p->value }}')" @click="open = false"
+                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-start text-sm transition {{ $priority === $p->value ? 'bg-blue-50 font-semibold text-blue-800' : 'text-slate-700 hover:bg-slate-50' }}">
+                            <span class="inline-flex h-2 w-2 flex-none rounded-full {{
+                                $p === App\Enums\Priority::High ? 'bg-red-500' :
+                                ($p === App\Enums\Priority::Medium ? 'bg-amber-500' : 'bg-slate-400')
+                            }}"></span>
+                            {{ $p->label() }}
+                        </button>
+                    @endforeach
+                </div>
+            </div>
 
-            <select wire:model.live="status"
-                class="rounded-xl border-slate-300 py-2.5 pe-8 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                <option value="all">{{ __('All statuses') }}</option>
-                @foreach (App\Enums\TaskStatus::cases() as $s)
-                    <option value="{{ $s->value }}">{{ $s->label() }}</option>
-                @endforeach
-            </select>
+            {{-- Status filter --}}
+            <div x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="relative">
+                <button type="button" @click="open = !open"
+                    class="inline-flex min-w-[9.5rem] items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+                    <span>
+                        {{ $status === 'all' ? __('All statuses') : \App\Enums\TaskStatus::from($status)->label() }}
+                    </span>
+                    <svg class="h-4 w-4 text-slate-400 transition" :class="open && 'rotate-180'" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div x-show="open" x-cloak x-transition.opacity.duration.100ms
+                    class="absolute start-0 z-30 mt-1.5 w-48 overflow-hidden rounded-xl border border-slate-200 bg-white py-1.5 shadow-lg ring-1 ring-black/5">
+                    <button type="button" wire:click="$set('status', 'all')" @click="open = false"
+                        class="flex w-full items-center gap-2.5 px-3.5 py-2 text-start text-sm transition {{ $status === 'all' ? 'bg-blue-50 font-semibold text-blue-800' : 'text-slate-700 hover:bg-slate-50' }}">
+                        {{ __('All statuses') }}
+                    </button>
+                    @foreach (App\Enums\TaskStatus::cases() as $s)
+                        <button type="button" wire:click="$set('status', '{{ $s->value }}')" @click="open = false"
+                            class="flex w-full items-center gap-2.5 px-3.5 py-2 text-start text-sm transition {{ $status === $s->value ? 'bg-blue-50 font-semibold text-blue-800' : 'text-slate-700 hover:bg-slate-50' }}">
+                            <span class="inline-flex h-2 w-2 flex-none rounded-full {{
+                                $s === App\Enums\TaskStatus::Pending ? 'bg-slate-400' :
+                                ($s === App\Enums\TaskStatus::InProgress ? 'bg-blue-500' : 'bg-emerald-500')
+                            }}"></span>
+                            {{ $s->label() }}
+                        </button>
+                    @endforeach
+                </div>
+            </div>
+
+            {{-- Per page --}}
+            <div x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false" class="relative">
+                <button type="button" @click="open = !open"
+                    class="inline-flex min-w-[7.5rem] items-center justify-between gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50">
+                    <span>{{ __(':count / page', ['count' => $perPage]) }}</span>
+                    <svg class="h-4 w-4 text-slate-400 transition" :class="open && 'rotate-180'" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <div x-show="open" x-cloak x-transition.opacity.duration.100ms
+                    class="absolute start-0 z-30 mt-1.5 w-40 overflow-hidden rounded-xl border border-slate-200 bg-white py-1.5 shadow-lg ring-1 ring-black/5">
+                    @foreach ([20, 50, 100] as $count)
+                        <button type="button" wire:click="$set('perPage', {{ $count }})" @click="open = false"
+                            class="flex w-full items-center justify-between gap-2 px-3.5 py-2 text-start text-sm transition {{ $perPage === $count ? 'bg-blue-50 font-semibold text-blue-800' : 'text-slate-700 hover:bg-slate-50' }}">
+                            <span>{{ $count }}</span>
+                            <span class="text-xs font-normal text-slate-400">{{ __('records') }}</span>
+                        </button>
+                    @endforeach
+                </div>
+            </div>
 
             @if ($search || $status !== 'all' || $priority !== 'all')
                 <button wire:click="$set('search',''), $set('status','all'), $set('priority','all')"
@@ -69,10 +136,35 @@
     </div>
 
     <div class="overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm">
+        @if ($this->selectedCount > 0)
+            <div class="flex items-center justify-between gap-3 border-b border-slate-200 bg-blue-50 px-4 py-2.5 text-sm">
+                <span class="font-medium text-blue-800">
+                    {{ $this->selectedCount }} {{ __('selected') }}
+                </span>
+                <div class="flex items-center gap-2">
+                    <button wire:click="clearSelection"
+                        class="rounded-lg px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100">
+                        {{ __('Clear') }}
+                    </button>
+                    <button wire:click="deleteSelected"
+                        wire:confirm="{{ __('Delete the selected task(s)? This cannot be undone.') }}"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700">
+                        <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        {{ __('Delete selected') }}
+                    </button>
+                </div>
+            </div>
+        @endif
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-100/80">
                     <tr class="text-start text-xs font-semibold uppercase tracking-wide text-slate-600">
+                        <th class="w-10 px-4 py-3">
+                            <input type="checkbox" wire:model.live="selectAllPage"
+                                class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                        </th>
                         <th class="px-4 py-3">
                             <button wire:click="sort('title')" class="flex items-center gap-1 hover:text-slate-700">
                                 {{ __('Task') }} @if ($sortBy === 'title'){{ $sortDir === 'asc' ? '▲' : '▼' }}@endif
@@ -80,6 +172,7 @@
                         </th>
                         <th class="hidden px-4 py-3 lg:table-cell">{{ __('Priority') }}</th>
                         <th class="px-4 py-3">{{ __('Status') }}</th>
+                        <th class="hidden px-4 py-3 md:table-cell">{{ __('Changed by') }}</th>
                         <th class="px-4 py-3">
                             <button wire:click="sort('created_at')" class="flex items-center gap-1 hover:text-slate-700">
                                 {{ __('Reported') }} @if ($sortBy === 'created_at'){{ $sortDir === 'asc' ? '▲' : '▼' }}@endif
@@ -91,6 +184,10 @@
                 <tbody class="divide-y divide-slate-100 text-sm">
                     @forelse ($tasks as $task)
                         <tr class="transition hover:bg-blue-50/40">
+                            <td class="px-4 py-3">
+                                <input type="checkbox" wire:model.live="selected.{{ $task->id }}"
+                                    class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                            </td>
                             <td class="px-4 py-3">
                                 <a href="{{ route('admin.tasks.show', $task) }}" class="block">
                                     <span class="font-medium text-slate-900 hover:text-blue-600">{{ $task->title }}</span>
@@ -142,6 +239,9 @@
                                     </div>
                                 </div>
                             </td>
+                            <td class="hidden px-4 py-3 text-slate-600 md:table-cell">
+                                {{ $task->assignee?->name ?? '—' }}
+                            </td>
                             <td class="px-4 py-3 text-slate-500">
                                 {{ $task->created_at->diffForHumans() }}
                             </td>
@@ -154,7 +254,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="px-4 py-16 text-center">
+                            <td colspan="8" class="px-4 py-16 text-center">
                                 <svg class="mx-auto h-10 w-10 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.6a2 2 0 011.4.6L19 8.4a2 2 0 01.6 1.4V19a2 2 0 01-2 2z" />
                                 </svg>

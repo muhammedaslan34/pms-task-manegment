@@ -25,6 +25,9 @@ class TaskList extends Component
     #[Url(history: true)]
     public string $priority = 'all';
 
+    #[Url(history: true)]
+    public int $perPage = 20;
+
     public string $sortBy = 'created_at';
     public string $sortDir = 'desc';
 
@@ -32,10 +35,14 @@ class TaskList extends Component
     public ?Task $managing = null;
     public TaskStatusForm $form;
 
+    public array $selected = [];
+    public bool $selectAllPage = false;
+
     public function updating($property): void
     {
-        if (in_array($property, ['search', 'status', 'priority'], true)) {
+        if (in_array($property, ['search', 'status', 'priority', 'perPage'], true)) {
             $this->resetPage();
+            $this->clearSelection();
         }
     }
 
@@ -47,6 +54,53 @@ class TaskList extends Component
             $this->sortBy = $column;
             $this->sortDir = 'asc';
         }
+        $this->clearSelection();
+    }
+
+    public function updatedSelectAllPage($value): void
+    {
+        $ids = $this->taskQuery()->forPage($this->getPage(), $this->perPage)->pluck('id');
+
+        foreach ($ids as $id) {
+            $this->selected[(string) $id] = (bool) $value;
+        }
+    }
+
+    #[Computed]
+    public function selectedIds(): array
+    {
+        return collect($this->selected)
+            ->filter()
+            ->keys()
+            ->map(fn ($id) => (int) $id)
+            ->all();
+    }
+
+    #[Computed]
+    public function selectedCount(): int
+    {
+        return count(array_filter($this->selected));
+    }
+
+    public function deleteSelected(): void
+    {
+        $ids = $this->selectedIds;
+
+        if (empty($ids)) {
+            return;
+        }
+
+        Task::whereIn('id', $ids)->delete();
+        $count = count($ids);
+        $this->clearSelection();
+        unset($this->counts);
+        session()->flash('status', $count . ' task(s) deleted.');
+    }
+
+    public function clearSelection(): void
+    {
+        $this->selected = [];
+        $this->selectAllPage = false;
     }
 
     public function openManage(Task $task): void
@@ -90,6 +144,7 @@ class TaskList extends Component
 
         $task->update([
             'status' => $newStatus,
+            'assigned_to' => auth()->id(),
             'completed_at' => $isCompleted ? ($task->completed_at ?? now()) : null,
         ]);
 
@@ -109,7 +164,16 @@ class TaskList extends Component
 
     public function render()
     {
-        $query = Task::query()
+        return view('livewire.admin.task-list', [
+            'tasks' => $this->taskQuery()->with('assignee')->paginate($this->perPage),
+        ])
+            ->layout('components.layouts.app')
+            ->title('Task Dashboard');
+    }
+
+    protected function taskQuery()
+    {
+        return Task::query()
             ->when($this->search, function ($q) {
                 $q->where(function ($q) {
                     $q->where('title', 'like', "%{$this->search}%")
@@ -121,11 +185,5 @@ class TaskList extends Component
             ->when($this->status !== 'all', fn($q) => $q->where('status', $this->status))
             ->when($this->priority !== 'all', fn($q) => $q->where('priority', $this->priority))
             ->orderBy($this->sortBy, $this->sortDir);
-
-        return view('livewire.admin.task-list', [
-            'tasks' => $query->paginate(10),
-        ])
-            ->layout('components.layouts.app')
-            ->title('Task Dashboard');
     }
 }

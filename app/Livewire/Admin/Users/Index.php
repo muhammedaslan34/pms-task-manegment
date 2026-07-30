@@ -25,9 +25,60 @@ class Index extends Component
 
     public UserForm $form;
 
+    public array $selected = [];
+    public bool $selectAllPage = false;
+
     public function updatingSearch(): void
     {
         $this->resetPage();
+        $this->clearSelection();
+    }
+
+    public function updatedSelectAllPage($value): void
+    {
+        $ids = $this->userQuery()->forPage($this->getPage(), 10)->pluck('id');
+
+        foreach ($ids as $id) {
+            $this->selected[(string) $id] = (bool) $value;
+        }
+    }
+
+    #[Computed]
+    public function selectedIds(): array
+    {
+        return collect($this->selected)
+            ->filter()
+            ->keys()
+            ->map(fn ($id) => (int) $id)
+            ->reject(fn ($id) => $id === auth()->id())
+            ->all();
+    }
+
+    #[Computed]
+    public function selectedCount(): int
+    {
+        return count(array_filter($this->selected));
+    }
+
+    public function deleteSelected(): void
+    {
+        $ids = $this->selectedIds;
+
+        if (empty($ids)) {
+            $this->clearSelection();
+            return;
+        }
+
+        User::whereIn('id', $ids)->delete();
+        $count = count($ids);
+        $this->clearSelection();
+        session()->flash('status', $count . ' user(s) deleted.');
+    }
+
+    public function clearSelection(): void
+    {
+        $this->selected = [];
+        $this->selectAllPage = false;
     }
 
     public function createUser(): void
@@ -46,6 +97,13 @@ class Index extends Component
     {
         if ($this->form->editing) {
             $user = User::findOrFail($this->form->userId);
+
+            if ($user->id === auth()->id() && ! $this->form->is_admin) {
+                throw \Illuminate\Validation\ValidationException::withMessages([
+                    'form.is_admin' => __('You cannot remove your own administrator privileges.'),
+                ]);
+            }
+
             $this->form->update($user);
             $message = 'User updated.';
         } else {
@@ -93,20 +151,22 @@ class Index extends Component
 
     public function render()
     {
-        $users = User::query()
+        return view('livewire.admin.users.index', [
+            'users' => $this->userQuery()->paginate(10),
+        ])
+            ->layout('components.layouts.app')
+            ->title('Users');
+    }
+
+    protected function userQuery()
+    {
+        return User::query()
             ->when($this->search, function ($q) {
                 $q->where(function ($q) {
                     $q->where('name', 'like', "%{$this->search}%")
                         ->orWhere('email', 'like', "%{$this->search}%");
                 });
             })
-            ->orderByDesc('id')
-            ->paginate(10);
-
-        return view('livewire.admin.users.index', [
-            'users' => $users,
-        ])
-            ->layout('components.layouts.app')
-            ->title('Users');
+            ->orderByDesc('id');
     }
 }

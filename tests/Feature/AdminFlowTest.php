@@ -99,4 +99,37 @@ class AdminFlowTest extends TestCase
 
         $this->assertDatabaseHas('users', ['email' => 'new@test.com']);
     }
+
+    public function test_bulk_deletes_selected_tasks(): void
+    {
+        $user = User::factory()->create();
+        $keep = Task::factory()->create(['title' => 'Keep me']);
+        $deleteA = Task::factory()->create(['title' => 'Delete A']);
+        $deleteB = Task::factory()->create(['title' => 'Delete B']);
+
+        Livewire::actingAs($user)
+            ->test(\App\Livewire\Admin\TaskList::class)
+            ->set('selected.' . $deleteA->id, true)
+            ->set('selected.' . $deleteB->id, true)
+            ->call('deleteSelected');
+
+        $this->assertDatabaseMissing('tasks', ['id' => $deleteA->id]);
+        $this->assertDatabaseMissing('tasks', ['id' => $deleteB->id]);
+        $this->assertDatabaseHas('tasks', ['id' => $keep->id]);
+    }
+
+    public function test_bulk_deletes_selected_users_but_not_self(): void
+    {
+        $admin = User::factory()->create();
+        $other = User::factory()->create(['email' => 'other@test.com']);
+
+        Livewire::actingAs($admin)
+            ->test(UsersIndex::class)
+            ->set('selected.' . $admin->id, true)
+            ->set('selected.' . $other->id, true)
+            ->call('deleteSelected');
+
+        $this->assertDatabaseHas('users', ['id' => $admin->id]);
+        $this->assertDatabaseMissing('users', ['id' => $other->id]);
+    }
 }

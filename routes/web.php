@@ -25,5 +25,8 @@ Route::post('/logout', function () {
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::get('/tasks', TaskList::class)->name('tasks.index');
     Route::get('/tasks/{task}', TaskShow::class)->name('tasks.show');
-    Route::get('/users', UsersIndex::class)->name('users.index');
+
+    Route::middleware('admin')->group(function () {
+        Route::get('/users', UsersIndex::class)->name('users.index');
+    });
 });

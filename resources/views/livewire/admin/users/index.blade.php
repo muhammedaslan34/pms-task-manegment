@@ -41,10 +41,35 @@
     </div>
 
     <div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        @if ($this->selectedCount > 0)
+            <div class="flex items-center justify-between gap-3 border-b border-slate-200 bg-blue-50 px-4 py-2.5 text-sm">
+                <span class="font-medium text-blue-800">
+                    {{ $this->selectedCount }} {{ __('selected') }}
+                </span>
+                <div class="flex items-center gap-2">
+                    <button wire:click="clearSelection"
+                        class="rounded-lg px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100">
+                        {{ __('Clear') }}
+                    </button>
+                    <button wire:click="deleteSelected"
+                        wire:confirm="{{ __('Delete the selected user(s)? You cannot be deleted. This cannot be undone.') }}"
+                        class="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700">
+                        <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                        {{ __('Delete selected') }}
+                    </button>
+                </div>
+            </div>
+        @endif
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50">
                     <tr class="text-start text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <th class="w-10 px-4 py-3">
+                            <input type="checkbox" wire:model.live="selectAllPage"
+                                class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                        </th>
                         <th class="px-4 py-3">{{ __('Name') }}</th>
                         <th class="px-4 py-3">{{ __('Email') }}</th>
                         <th class="hidden px-4 py-3 sm:table-cell">{{ __('Created') }}</th>
@@ -55,12 +80,23 @@
                     @forelse ($users as $user)
                         <tr class="transition hover:bg-slate-50">
                             <td class="px-4 py-3">
+                                @if ($user->id === auth()->id())
+                                    <span class="block w-4"></span>
+                                @else
+                                    <input type="checkbox" wire:model.live="selected.{{ $user->id }}"
+                                        class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                                @endif
+                            </td>
+                            <td class="px-4 py-3">
                                 <div class="flex items-center gap-3">
                                     <span class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-800">
                                         {{ strtoupper(substr($user->name, 0, 1)) }}
                                     </span>
                                     <span class="font-medium text-slate-900">
                                         {{ $user->name }}
+                                        @if ($user->is_admin)
+                                            <span class="ms-1 rounded bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-800">{{ __('Admin') }}</span>
+                                        @endif
                                         @if ($user->id === auth()->id())
                                             <span class="ms-1 rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">{{ __('you') }}</span>
                                         @endif
@@ -80,7 +116,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-4 py-16 text-center text-sm text-slate-500">{{ __('No users found.') }}</td>
+                            <td colspan="5" class="px-4 py-16 text-center text-sm text-slate-500">{{ __('No users found.') }}</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -132,6 +168,13 @@
                             class="mt-1.5 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
                         @error('form.password') <p class="mt-1 text-sm text-red-600">{{ $message }}</p> @enderror
                     </div>
+
+                    <label class="flex items-center gap-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3">
+                        <input type="checkbox" wire:model="form.is_admin"
+                            class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                        <span class="text-sm font-medium text-slate-700">{{ __('Administrator') }}</span>
+                        <span class="text-xs text-slate-400">{{ __('Grants access to manage users.') }}</span>
+                    </label>
 
                     <div class="flex items-center justify-end gap-3 border-t border-slate-200 pt-4">
                         <button type="button" wire:click="closeForm"

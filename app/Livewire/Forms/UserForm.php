@@ -15,6 +15,8 @@ class UserForm extends Form
 
     public string $password = '';
 
+    public bool $is_admin = false;
+
     public bool $editing = false;
 
     public function rules(): array
@@ -32,6 +34,7 @@ class UserForm extends Form
                 'min:8',
                 'max:255',
             ]),
+            'is_admin' => ['boolean'],
         ];
     }
 
@@ -48,6 +51,7 @@ class UserForm extends Form
         $this->name = $user->name;
         $this->email = $user->email;
         $this->password = '';
+        $this->is_admin = (bool) $user->is_admin;
     }
 
     public function store(): User
@@ -56,6 +60,7 @@ class UserForm extends Form
         $payload = [
             'name' => $data['name'],
             'email' => $data['email'],
+            'is_admin' => $data['is_admin'],
         ];
         if (! empty($data['password'])) {
             $payload['password'] = $data['password'];
@@ -71,6 +76,7 @@ class UserForm extends Form
         $user->fill([
             'name' => $data['name'],
             'email' => $data['email'],
+            'is_admin' => $data['is_admin'],
         ])->save();
 
         if (filled($data['password'])) {

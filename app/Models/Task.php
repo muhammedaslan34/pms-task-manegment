@@ -19,6 +19,7 @@ class Task extends Model
         'priority',
         'status',
         'submitted_by',
+        'assigned_to',
         'resolution_note',
         'completed_at',
     ];
@@ -30,6 +31,11 @@ class Task extends Model
             'status' => TaskStatus::class,
             'completed_at' => 'datetime',
         ];
+    }
+
+    public function assignee()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
     }
 
     public function screenshotUrl(): ?string

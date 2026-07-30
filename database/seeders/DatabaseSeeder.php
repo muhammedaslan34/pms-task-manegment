@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Support Admin',
             'email' => 'admin@taskflow.test',
             'password' => bcrypt('password'),
+            'is_admin' => true,
         ]);
 
         User::factory()->create([

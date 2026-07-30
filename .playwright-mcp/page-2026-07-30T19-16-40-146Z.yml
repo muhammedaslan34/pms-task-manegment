@@ -1,0 +1,277 @@
+- generic [active] [ref=f10e1]:
+  - banner [ref=f10e2]:
+    - generic [ref=f10e3]:
+      - link "TaskFlow" [ref=f10e4] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=f10e9]:
+        - link "إرسال مهمة" [ref=f10e10] [cursor=pointer]:
+          - /url: /
+        - link "لوحة التحكم" [ref=f10e11] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/admin/tasks
+        - link "المستخدمون" [ref=f10e12] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/admin/users
+        - generic [ref=f10e13]: Support Admin
+        - button "تسجيل الخروج" [ref=f10e15]
+  - main [ref=f10e17]:
+    - generic [ref=f10e18]:
+      - generic [ref=f10e19]:
+        - heading "لوحة المهام" [level=1] [ref=f10e20]
+        - paragraph [ref=f10e21]: راجع المهام الواردة واعمل عليها وأغلقها.
+      - generic [ref=f10e22]:
+        - generic [ref=f10e25]:
+          - paragraph [ref=f10e26]: قيد الانتظار
+          - paragraph [ref=f10e27]: "6"
+          - paragraph [ref=f10e28]: مهام
+        - generic [ref=f10e34]:
+          - paragraph [ref=f10e35]: قيد التنفيذ
+          - paragraph [ref=f10e36]: "3"
+          - paragraph [ref=f10e37]: مهام
+        - generic [ref=f10e43]:
+          - paragraph [ref=f10e44]: مكتملة
+          - paragraph [ref=f10e45]: "6"
+          - paragraph [ref=f10e46]: مهام
+      - generic [ref=f10e50]:
+        - searchbox "ابحث في المهام..." [ref=f10e52]
+        - generic [ref=f10e53]:
+          - button "كل الأولويات" [ref=f10e55]
+          - button "كل الحالات" [ref=f10e60]
+          - button "20 / صفحة" [ref=f10e65]
+      - table [ref=f10e71]:
+        - rowgroup [ref=f10e72]:
+          - row [ref=f10e73]:
+            - columnheader [ref=f10e74]:
+              - checkbox [ref=f10e75]
+            - columnheader [ref=f10e76]:
+              - button "المهمة" [ref=f10e77]
+            - columnheader "الأولوية" [ref=f10e78]
+            - columnheader "الحالة" [ref=f10e79]
+            - columnheader "تم التغيير بواسطة" [ref=f10e80]
+            - columnheader [ref=f10e81]:
+              - button "أُبلغ عنها ▼" [ref=f10e82]
+            - columnheader "إجراءات" [ref=f10e83]
+        - rowgroup [ref=f10e84]:
+          - row [ref=f10e85]:
+            - cell [ref=f10e86]:
+              - checkbox [ref=f10e87]
+            - cell [ref=f10e88]:
+              - link "Checkout button unresponsive on mobile Safari https://shop.example.com/checkout" [ref=f10e89] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/1
+                - text: Checkout button unresponsive on mobile Safari
+                - generic [ref=f10e90]: https://shop.example.com/checkout
+            - cell "عالية" [ref=f10e91]
+            - cell [ref=f10e93]:
+              - button "مكتملة" [ref=f10e95]
+            - cell "—" [ref=f10e99]
+            - cell "منذ 10 دقائق" [ref=f10e100]
+            - cell [ref=f10e101]:
+              - button "إدارة" [ref=f10e102]
+          - row [ref=f10e103]:
+            - cell [ref=f10e104]:
+              - checkbox [ref=f10e105]
+            - cell [ref=f10e106]:
+              - link "Dashboard charts overlap on narrow screens https://app.example.com/dashboard" [ref=f10e107] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/2
+                - text: Dashboard charts overlap on narrow screens
+                - generic [ref=f10e108]: https://app.example.com/dashboard
+            - cell "متوسطة" [ref=f10e109]
+            - cell [ref=f10e111]:
+              - button "قيد التنفيذ" [ref=f10e113]
+            - cell "—" [ref=f10e117]
+            - cell "منذ 10 دقائق" [ref=f10e118]
+            - cell [ref=f10e119]:
+              - button "إدارة" [ref=f10e120]
+          - row [ref=f10e121]:
+            - cell [ref=f10e122]:
+              - checkbox [ref=f10e123]
+            - cell [ref=f10e124]:
+              - link "Search returns no results https://example.com/cart" [ref=f10e125] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/10
+                - text: Search returns no results
+                - generic [ref=f10e126]: https://example.com/cart
+            - cell "منخفضة" [ref=f10e127]
+            - cell [ref=f10e129]:
+              - button "مكتملة" [ref=f10e131]
+            - cell "—" [ref=f10e135]
+            - cell "منذ 3 أيام" [ref=f10e136]
+            - cell [ref=f10e137]:
+              - button "إدارة" [ref=f10e138]
+          - row [ref=f10e139]:
+            - cell [ref=f10e140]:
+              - checkbox [ref=f10e141]
+            - cell [ref=f10e142]:
+              - link "Images broken on product page https://example.com/checkout" [ref=f10e143] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/7
+                - text: Images broken on product page
+                - generic [ref=f10e144]: https://example.com/checkout
+            - cell "متوسطة" [ref=f10e145]
+            - cell [ref=f10e147]:
+              - button "قيد الانتظار" [ref=f10e149]
+            - cell "—" [ref=f10e153]
+            - cell "منذ 3 أيام" [ref=f10e154]
+            - cell [ref=f10e155]:
+              - button "إدارة" [ref=f10e156]
+          - row [ref=f10e157]:
+            - cell [ref=f10e158]:
+              - checkbox [ref=f10e159]
+            - cell [ref=f10e160]:
+              - link "Footer year shows 2024 https://example.com" [ref=f10e161] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/3
+                - text: Footer year shows 2024
+                - generic [ref=f10e162]: https://example.com
+            - cell "منخفضة" [ref=f10e163]
+            - cell [ref=f10e165]:
+              - button "مكتملة" [ref=f10e167]
+            - cell "—" [ref=f10e171]
+            - cell "منذ 4 أيام" [ref=f10e172]
+            - cell [ref=f10e173]:
+              - button "إدارة" [ref=f10e174]
+          - row [ref=f10e175]:
+            - cell [ref=f10e176]:
+              - checkbox [ref=f10e177]
+            - cell [ref=f10e178]:
+              - link "Date picker overlaps footer https://example.com/cart" [ref=f10e179] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/11
+                - text: Date picker overlaps footer
+                - generic [ref=f10e180]: https://example.com/cart
+            - cell "متوسطة" [ref=f10e181]
+            - cell [ref=f10e183]:
+              - button "قيد الانتظار" [ref=f10e185]
+            - cell "—" [ref=f10e189]
+            - cell "منذ 6 أيام" [ref=f10e190]
+            - cell [ref=f10e191]:
+              - button "إدارة" [ref=f10e192]
+          - row [ref=f10e193]:
+            - cell [ref=f10e194]:
+              - checkbox [ref=f10e195]
+            - cell [ref=f10e196]:
+              - link "Login button not working https://example.com/cart" [ref=f10e197] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/4
+                - text: Login button not working
+                - generic [ref=f10e198]: https://example.com/cart
+            - cell "عالية" [ref=f10e199]
+            - cell [ref=f10e201]:
+              - button "قيد التنفيذ" [ref=f10e203]
+            - cell "—" [ref=f10e207]
+            - cell "منذ أسبوع" [ref=f10e208]
+            - cell [ref=f10e209]:
+              - button "إدارة" [ref=f10e210]
+          - row [ref=f10e211]:
+            - cell [ref=f10e212]:
+              - checkbox [ref=f10e213]
+            - cell [ref=f10e214]:
+              - link "Cart total shows wrong amount https://example.com/products/42" [ref=f10e215] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/12
+                - text: Cart total shows wrong amount
+                - generic [ref=f10e216]: https://example.com/products/42
+            - cell "متوسطة" [ref=f10e217]
+            - cell [ref=f10e219]:
+              - button "مكتملة" [ref=f10e221]
+            - cell "—" [ref=f10e225]
+            - cell "منذ أسبوع" [ref=f10e226]
+            - cell [ref=f10e227]:
+              - button "إدارة" [ref=f10e228]
+          - row [ref=f10e229]:
+            - cell [ref=f10e230]:
+              - checkbox [ref=f10e231]
+            - cell [ref=f10e232]:
+              - link "Search returns no results https://example.com/checkout" [ref=f10e233] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/8
+                - text: Search returns no results
+                - generic [ref=f10e234]: https://example.com/checkout
+            - cell "عالية" [ref=f10e235]
+            - cell [ref=f10e237]:
+              - button "مكتملة" [ref=f10e239]
+            - cell "—" [ref=f10e243]
+            - cell "منذ أسبوع" [ref=f10e244]
+            - cell [ref=f10e245]:
+              - button "إدارة" [ref=f10e246]
+          - row [ref=f10e247]:
+            - cell [ref=f10e248]:
+              - checkbox [ref=f10e249]
+            - cell [ref=f10e250]:
+              - link "Search returns no results https://example.com/products/42" [ref=f10e251] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/14
+                - text: Search returns no results
+                - generic [ref=f10e252]: https://example.com/products/42
+            - cell "متوسطة" [ref=f10e253]
+            - cell [ref=f10e255]:
+              - button "قيد الانتظار" [ref=f10e257]
+            - cell "—" [ref=f10e261]
+            - cell "منذ أسبوعين" [ref=f10e262]
+            - cell [ref=f10e263]:
+              - button "إدارة" [ref=f10e264]
+          - row [ref=f10e265]:
+            - cell [ref=f10e266]:
+              - checkbox [ref=f10e267]
+            - cell [ref=f10e268]:
+              - link "Images broken on product page https://example.com/checkout" [ref=f10e269] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/15
+                - text: Images broken on product page
+                - generic [ref=f10e270]: https://example.com/checkout
+            - cell "منخفضة" [ref=f10e271]
+            - cell [ref=f10e273]:
+              - button "قيد الانتظار" [ref=f10e275]
+            - cell "—" [ref=f10e279]
+            - cell "منذ أسبوعين" [ref=f10e280]
+            - cell [ref=f10e281]:
+              - button "إدارة" [ref=f10e282]
+          - row [ref=f10e283]:
+            - cell [ref=f10e284]:
+              - checkbox [ref=f10e285]
+            - cell [ref=f10e286]:
+              - link "Search returns no results https://example.com/cart" [ref=f10e287] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/6
+                - text: Search returns no results
+                - generic [ref=f10e288]: https://example.com/cart
+            - cell "عالية" [ref=f10e289]
+            - cell [ref=f10e291]:
+              - button "قيد الانتظار" [ref=f10e293]
+            - cell "—" [ref=f10e297]
+            - cell "منذ أسبوعين" [ref=f10e298]
+            - cell [ref=f10e299]:
+              - button "إدارة" [ref=f10e300]
+          - row [ref=f10e301]:
+            - cell [ref=f10e302]:
+              - checkbox [ref=f10e303]
+            - cell [ref=f10e304]:
+              - link "Date picker overlaps footer https://example.com/checkout" [ref=f10e305] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/9
+                - text: Date picker overlaps footer
+                - generic [ref=f10e306]: https://example.com/checkout
+            - cell "منخفضة" [ref=f10e307]
+            - cell [ref=f10e309]:
+              - button "قيد التنفيذ" [ref=f10e311]
+            - cell "—" [ref=f10e315]
+            - cell "منذ 3 أسابيع" [ref=f10e316]
+            - cell [ref=f10e317]:
+              - button "إدارة" [ref=f10e318]
+          - row [ref=f10e319]:
+            - cell [ref=f10e320]:
+              - checkbox [ref=f10e321]
+            - cell [ref=f10e322]:
+              - link "Mobile layout broken on dashboard https://app.example.com/dashboard" [ref=f10e323] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/13
+                - text: Mobile layout broken on dashboard
+                - generic [ref=f10e324]: https://app.example.com/dashboard
+            - cell "متوسطة" [ref=f10e325]
+            - cell [ref=f10e327]:
+              - button "قيد الانتظار" [ref=f10e329]
+            - cell "—" [ref=f10e333]
+            - cell "منذ 3 أسابيع" [ref=f10e334]
+            - cell [ref=f10e335]:
+              - button "إدارة" [ref=f10e336]
+          - row [ref=f10e337]:
+            - cell [ref=f10e338]:
+              - checkbox [ref=f10e339]
+            - cell [ref=f10e340]:
+              - link "Images broken on product page https://example.com/checkout" [ref=f10e341] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/5
+                - text: Images broken on product page
+                - generic [ref=f10e342]: https://example.com/checkout
+            - cell "عالية" [ref=f10e343]
+            - cell [ref=f10e345]:
+              - button "مكتملة" [ref=f10e347]
+            - cell "—" [ref=f10e351]
+            - cell "منذ 4 أسابيع" [ref=f10e352]
+            - cell [ref=f10e353]:
+              - button "إدارة" [ref=f10e354]

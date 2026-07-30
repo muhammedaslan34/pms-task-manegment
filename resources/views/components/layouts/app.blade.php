@@ -34,6 +34,10 @@
                 @if (auth()->check())
                     <a href="{{ route('admin.tasks.index') }}"
                         class="rounded-lg px-3 py-2 font-medium text-slate-600 transition hover:bg-blue-50 hover:text-brand-primary">{{ __('Dashboard') }}</a>
+                    @if (auth()->user()->isAdmin())
+                        <a href="{{ route('admin.users.index') }}"
+                            class="rounded-lg px-3 py-2 font-medium text-slate-600 transition hover:bg-blue-50 hover:text-brand-primary">{{ __('Users') }}</a>
+                    @endif
                     <span class="rounded-lg bg-slate-100 px-3 py-2 text-slate-700">{{ auth()->user()->name }}</span>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
