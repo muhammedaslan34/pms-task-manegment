@@ -187,7 +187,7 @@
 
                     <div>
                         <label for="form-resolution" class="block text-sm font-medium text-slate-700">
-                            Resolution / note {{ $form.status === \App\Enums\TaskStatus::Completed->value ? '<span class="text-red-500">*</span>' : '' }}
+                            Resolution / note @if ($form->status === \App\Enums\TaskStatus::Completed->value)<span class="text-red-500">*</span>@endif
                         </label>
                         <textarea id="form-resolution" wire:model="form.resolution_note" rows="3"
                             class="mt-1.5 block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
