@@ -1,0 +1,74 @@
+- generic [active] [ref=f4e1]:
+  - banner [ref=f4e2]:
+    - generic [ref=f4e3]:
+      - link "TaskFlow" [ref=f4e4] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=f4e9]:
+        - link "إرسال مهمة" [ref=f4e10] [cursor=pointer]:
+          - /url: /
+        - link "لوحة التحكم" [ref=f4e11] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/admin/tasks
+        - generic [ref=f4e12]: Support Admin
+        - button "تسجيل الخروج" [ref=f4e14]
+  - main [ref=f4e16]:
+    - generic [ref=f4e18]:
+      - generic [ref=f4e19]:
+        - generic [ref=f4e20]:
+          - heading "الإبلاغ عن مشكلة" [level=1] [ref=f4e21]
+          - paragraph [ref=f4e22]: وجدت خطأ أو شيئاً يحتاج إلى إصلاح؟ أخبرنا وسنباشر العمل عليه.
+        - generic [ref=f4e23]:
+          - generic [ref=f4e24]:
+            - generic [ref=f4e25]: العنوان *
+            - textbox "العنوان *" [ref=f4e26]:
+              - /placeholder: "مثال: زر تسجيل الدخول لا يستجيب عند النقر"
+          - generic [ref=f4e27]:
+            - generic [ref=f4e28]: رابط الصفحة (اختياري)
+            - textbox "رابط الصفحة (اختياري)" [ref=f4e29]:
+              - /placeholder: https://yoursite.com/problem-page
+          - generic [ref=f4e30]:
+            - generic [ref=f4e31]: الوصف
+            - textbox "الوصف" [ref=f4e32]:
+              - /placeholder: صف ما حدث، وما توقعته، وخطوات إعادة إنتاج المشكلة...
+          - generic [ref=f4e33]:
+            - generic [ref=f4e34]: الأولوية *
+            - generic [ref=f4e35]:
+              - generic [ref=f4e36] [cursor=pointer]:
+                - radio "منخفضة" [ref=f4e37]
+                - text: منخفضة
+              - generic [ref=f4e38] [cursor=pointer]:
+                - radio "متوسطة" [checked] [ref=f4e39]
+                - text: متوسطة
+              - generic [ref=f4e40] [cursor=pointer]:
+                - radio "عالية" [ref=f4e41]
+                - text: عالية
+          - generic [ref=f4e42]:
+            - generic [ref=f4e43]: لقطة الشاشة
+            - generic [ref=f4e44] [cursor=pointer]:
+              - paragraph [ref=f4e47]: انقر للرفع، الصق من الحافظة، أو اسحب وأفلت
+              - paragraph [ref=f4e48]: PNG أو JPG أو GIF حتى 10 ميجابايت
+          - generic [ref=f4e49]:
+            - generic [ref=f4e50]: بريدك الإلكتروني (اختياري)
+            - textbox "بريدك الإلكتروني (اختياري)" [ref=f4e51]:
+              - /placeholder: you@example.com
+              - text: admin@taskflow.test
+          - button "إرسال مهمة" [ref=f4e53]
+      - complementary [ref=f4e56]:
+        - generic [ref=f4e57]:
+          - heading "نصائح لتقرير جيد" [level=2] [ref=f4e58]
+          - list [ref=f4e59]:
+            - listitem [ref=f4e60]: أدرج رابط الصفحة التي تظهر فيها المشكلة.
+            - listitem [ref=f4e63]:
+              - generic [ref=f4e66]: الصق لقطة شاشة باستخدام Ctrl+V.
+            - listitem [ref=f4e67]: اذكر خطوات إعادة إنتاج المشكلة.
+        - generic [ref=f4e70]:
+          - heading "دليل الأولوية" [level=2] [ref=f4e71]
+          - generic [ref=f4e72]:
+            - generic [ref=f4e73]:
+              - generic [ref=f4e74]: عالية
+              - generic [ref=f4e75]: يُعيق العمل / فقدان بيانات
+            - generic [ref=f4e76]:
+              - generic [ref=f4e77]: متوسطة
+              - generic [ref=f4e78]: ميزة معطلة مع وجود حل بديل
+            - generic [ref=f4e79]:
+              - generic [ref=f4e80]: منخفضة
+              - generic [ref=f4e81]: بسيط / شكلي
