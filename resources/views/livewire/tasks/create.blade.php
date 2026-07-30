@@ -34,7 +34,8 @@
                 </div>
 
                 <div>
-                    <label for="page_link" class="block text-sm font-medium text-slate-700">Page link (URL)</label>
+                    <label for="page_link" class="block text-sm font-medium text-slate-700">Page link (URL)
+                        <span class="font-normal text-slate-400">(optional)</span></label>
                     <input id="page_link" type="url" wire:model="page_link"
                         class="mt-1.5 block w-full rounded-lg border-slate-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                         placeholder="https://yoursite.com/problem-page">
