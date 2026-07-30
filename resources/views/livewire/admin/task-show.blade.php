@@ -74,10 +74,6 @@
                 <h2 class="font-display text-sm font-semibold text-brand">{{ __('Manage task') }}</h2>
 
                 <dl class="mt-3 space-y-2 text-sm">
-                    <div class="flex justify-between gap-3">
-                        <dt class="text-slate-500">{{ __('Assigned to') }}</dt>
-                        <dd class="font-medium text-slate-900">{{ $task->assignee?->name ?? __('Unassigned') }}</dd>
-                    </div>
                     @if ($task->completed_at)
                         <div class="flex justify-between gap-3">
                             <dt class="text-slate-500">{{ __('Completed') }}</dt>
@@ -115,7 +111,7 @@
                         <button wire:click="setInProgress" wire:loading.attr="disabled"
                             class="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50">
                             <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6.3 2.84A1 1 0 005 3.73v12.54a1 1 0 001.5.87l10-6.27a1 1 0 000-1.74l-10-6.29z" /></svg>
-                            {{ __('Start working (assign to me)') }}
+                            {{ __('Start working') }}
                         </button>
                     @endif
 
@@ -180,12 +176,6 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-
-                    <label class="flex items-center gap-2 text-sm text-slate-700">
-                        <input type="checkbox" wire:model="form.assign_to_me"
-                            class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
-                        {{ __('Assign to me (:name)', ['name' => auth()->user()->name]) }}
-                    </label>
                 </div>
 
                 <div class="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">

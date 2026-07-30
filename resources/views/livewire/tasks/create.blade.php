@@ -10,8 +10,7 @@
         </div>
     </div>
 
-    <div class="grid gap-8 lg:grid-cols-3">
-        <div class="lg:col-span-2">
+    <div class="mx-auto max-w-3xl">
             <div class="mb-6">
                 <h1 class="font-display text-2xl font-bold text-brand">{{ __('Report an issue') }}</h1>
                 <p class="mt-1 text-sm text-slate-500">
@@ -147,51 +146,6 @@
                     </button>
                 </div>
             </form>
-        </div>
-
-        <aside class="space-y-4">
-            <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                <h2 class="font-display text-sm font-semibold text-brand">{{ __('Tips for a good report') }}</h2>
-                <ul class="mt-3 space-y-3 text-sm text-slate-600">
-                    <li class="flex gap-2.5">
-                        <svg class="mt-0.5 h-4 w-4 flex-none text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.54a4.5 4.5 0 00-1.242-7.244l-4.5-4.5a4.5 4.5 0 00-6.364 6.364L4.34 8.11" />
-                        </svg>
-                        {{ __('Include the exact page URL where the issue happens.') }}
-                    </li>
-                    <li class="flex gap-2.5">
-                        <svg class="mt-0.5 h-4 w-4 flex-none text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" />
-                        </svg>
-                        <span>{{ __('Paste a screenshot with') }} <kbd class="rounded bg-slate-100 px-1.5 py-0.5 text-xs">Ctrl</kbd>+<kbd class="rounded bg-slate-100 px-1.5 py-0.5 text-xs">V</kbd>.</span>
-                    </li>
-                    <li class="flex gap-2.5">
-                        <svg class="mt-0.5 h-4 w-4 flex-none text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                        </svg>
-                        {{ __('List the steps to reproduce the problem.') }}
-                    </li>
-                </ul>
-            </div>
-
-            <div class="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm">
-                <h2 class="font-display text-sm font-semibold text-brand">{{ __('Priority guide') }}</h2>
-                <dl class="mt-3 space-y-2.5 text-sm">
-                    <div class="flex items-center gap-2">
-                        <span class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700 ring-1 ring-red-200">{{ __('High') }}</span>
-                        <span class="text-slate-600">{{ __('Blocks work / data loss') }}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800 ring-1 ring-amber-200">{{ __('Medium') }}</span>
-                        <span class="text-slate-600">{{ __('Broken feature, workaround exists') }}</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-700 ring-1 ring-gray-200">{{ __('Low') }}</span>
-                        <span class="text-slate-600">{{ __('Minor / cosmetic') }}</span>
-                    </div>
-                </dl>
-            </div>
-        </aside>
     </div>
 
     <script>

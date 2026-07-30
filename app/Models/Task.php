@@ -6,7 +6,6 @@ use App\Enums\Priority;
 use App\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Task extends Model
 {
@@ -20,7 +19,6 @@ class Task extends Model
         'priority',
         'status',
         'submitted_by',
-        'assigned_to',
         'resolution_note',
         'completed_at',
     ];
@@ -32,11 +30,6 @@ class Task extends Model
             'status' => TaskStatus::class,
             'completed_at' => 'datetime',
         ];
-    }
-
-    public function assignee(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'assigned_to');
     }
 
     public function screenshotUrl(): ?string

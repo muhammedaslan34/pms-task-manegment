@@ -4,31 +4,49 @@
         <p class="mt-1 text-sm text-slate-500">{{ __('Review, work on, and resolve incoming support tasks.') }}</p>
     </div>
 
-    <div class="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+    <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
         @foreach (App\Enums\TaskStatus::cases() as $statusOption)
-            <button wire:click="$set('status', '{{ $statusOption->value }}')"
-                class="rounded-xl border p-4 text-start shadow-sm transition {{
-                    $status === $statusOption->value ? 'border-blue-800 ring-1 ring-blue-800 bg-blue-50' : 'border-slate-200/80 bg-white hover:border-slate-300' }}">
-                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 {{ $statusOption->color() }}">
-                    {{ $statusOption->label() }}
-                </span>
-                <p class="mt-2 font-display text-2xl font-bold text-brand">{{ $this->counts[$statusOption->value] }}</p>
-            </button>
+            <div class="relative overflow-hidden rounded-2xl border bg-gradient-to-br p-5 shadow-sm {{ $statusOption->cardClasses() }}">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <p class="text-sm font-medium text-slate-600">{{ $statusOption->label() }}</p>
+                        <p class="mt-2 font-display text-3xl font-bold tracking-tight text-brand">
+                            {{ $this->counts[$statusOption->value] }}
+                        </p>
+                        <p class="mt-1 text-xs text-slate-400">{{ __('tasks') }}</p>
+                    </div>
+                    <span class="inline-flex h-11 w-11 items-center justify-center rounded-xl {{ $statusOption->iconClasses() }}">
+                        @if ($statusOption === App\Enums\TaskStatus::Pending)
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        @elseif ($statusOption === App\Enums\TaskStatus::InProgress)
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 010 1.972l-11.54 6.347a1.125 1.125 0 01-1.667-.986V5.653z" />
+                            </svg>
+                        @else
+                            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        @endif
+                    </span>
+                </div>
+            </div>
         @endforeach
     </div>
 
-    <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div class="relative flex-1 sm:max-w-xs">
-            <svg class="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.45 4.4l3.07 3.08a1 1 0 01-1.42 1.41l-3.07-3.07A7 7 0 012 9z" clip-rule="evenodd" />
+    <div class="mb-5 flex flex-col gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+        <div class="relative flex-1 sm:max-w-sm">
+            <svg class="pointer-events-none absolute start-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
             </svg>
             <input type="text" wire:model.live.debounce.300ms="search" placeholder="{{ __('Search tasks...') }}"
-                class="w-full rounded-lg border-slate-300 py-2.5 ps-9 pe-3 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                class="w-full rounded-xl border-slate-300 py-2.5 ps-10 pe-3.5 shadow-sm focus:border-blue-500 focus:ring-blue-500">
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="flex flex-wrap items-center gap-3">
             <select wire:model.live="priority"
-                class="rounded-lg border-slate-300 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                class="rounded-xl border-slate-300 py-2.5 pe-8 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
                 <option value="all">{{ __('All priorities') }}</option>
                 @foreach (App\Enums\Priority::cases() as $p)
                     <option value="{{ $p->value }}">{{ $p->label() }}</option>
@@ -36,7 +54,7 @@
             </select>
 
             <select wire:model.live="status"
-                class="rounded-lg border-slate-300 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                class="rounded-xl border-slate-300 py-2.5 pe-8 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
                 <option value="all">{{ __('All statuses') }}</option>
                 @foreach (App\Enums\TaskStatus::cases() as $s)
                     <option value="{{ $s->value }}">{{ $s->label() }}</option>
@@ -45,7 +63,7 @@
 
             @if ($search || $status !== 'all' || $priority !== 'all')
                 <button wire:click="$set('search',''), $set('status','all'), $set('priority','all')"
-                    class="rounded-lg px-3 py-2 text-sm text-slate-500 hover:bg-slate-100">{{ __('Clear') }}</button>
+                    class="rounded-xl px-3.5 py-2.5 text-sm font-medium text-blue-800 hover:bg-blue-50">{{ __('Clear') }}</button>
             @endif
         </div>
     </div>
@@ -62,7 +80,6 @@
                         </th>
                         <th class="hidden px-4 py-3 lg:table-cell">{{ __('Priority') }}</th>
                         <th class="px-4 py-3">{{ __('Status') }}</th>
-                        <th class="hidden px-4 py-3 md:table-cell">{{ __('Assigned') }}</th>
                         <th class="px-4 py-3">
                             <button wire:click="sort('created_at')" class="flex items-center gap-1 hover:text-slate-700">
                                 {{ __('Reported') }} @if ($sortBy === 'created_at'){{ $sortDir === 'asc' ? '▲' : '▼' }}@endif
@@ -88,12 +105,42 @@
                                 </span>
                             </td>
                             <td class="px-4 py-3">
-                                <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 {{ $task->status->color() }}">
-                                    {{ $task->status->label() }}
-                                </span>
-                            </td>
-                            <td class="hidden px-4 py-3 text-slate-500 md:table-cell">
-                                {{ $task->assignee?->name ?? '—' }}
+                                <div
+                                    x-data="{ open: false }"
+                                    @click.outside="open = false"
+                                    @keydown.escape.window="open = false"
+                                    class="relative inline-block min-w-[8.5rem]"
+                                    wire:key="status-{{ $task->id }}-{{ $task->status->value }}">
+                                    <button
+                                        type="button"
+                                        @click="open = !open"
+                                        class="inline-flex w-full items-center justify-between gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-medium ring-1 transition hover:opacity-90 {{ $task->status->color() }}">
+                                        <span>{{ $task->status->label() }}</span>
+                                        <svg class="h-3.5 w-3.5 opacity-60" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.17l3.71-3.94a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+
+                                    <div
+                                        x-show="open"
+                                        x-transition.opacity.duration.100ms
+                                        x-cloak
+                                        class="absolute start-0 z-20 mt-1 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
+                                        @foreach (App\Enums\TaskStatus::cases() as $s)
+                                            <button
+                                                type="button"
+                                                wire:click="updateStatus({{ $task->id }}, '{{ $s->value }}')"
+                                                @click="open = false"
+                                                class="flex w-full items-center gap-2 px-3 py-2 text-start text-xs font-medium text-slate-700 transition hover:bg-slate-50 {{ $task->status === $s ? 'bg-slate-50' : '' }}">
+                                                <span class="inline-flex h-2 w-2 flex-none rounded-full {{
+                                                    $s === App\Enums\TaskStatus::Pending ? 'bg-slate-400' :
+                                                    ($s === App\Enums\TaskStatus::InProgress ? 'bg-blue-500' : 'bg-emerald-500')
+                                                }}"></span>
+                                                {{ $s->label() }}
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </td>
                             <td class="px-4 py-3 text-slate-500">
                                 {{ $task->created_at->diffForHumans() }}
@@ -107,7 +154,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-4 py-16 text-center">
+                            <td colspan="7" class="px-4 py-16 text-center">
                                 <svg class="mx-auto h-10 w-10 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.6a2 2 0 011.4.6L19 8.4a2 2 0 01.6 1.4V19a2 2 0 01-2 2z" />
                                 </svg>
@@ -170,24 +217,8 @@
                     <hr class="border-slate-100">
 
                     <div>
-                        <label for="form-status" class="block text-sm font-medium text-slate-700">{{ __('Status') }}</label>
-                        <select id="form-status" wire:model="form.status"
-                            class="mt-1.5 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            @foreach (App\Enums\TaskStatus::cases() as $s)
-                                <option value="{{ $s->value }}">{{ $s->label() }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <label class="flex items-center gap-2 text-sm text-slate-700">
-                        <input type="checkbox" wire:model="form.assign_to_me"
-                            class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                        {{ __('Assign to me (:name)', ['name' => auth()->user()->name]) }}
-                    </label>
-
-                    <div>
                         <label for="form-resolution" class="block text-sm font-medium text-slate-700">
-                            {{ __('Resolution / note') }} @if ($form->status === \App\Enums\TaskStatus::Completed->value)<span class="text-red-500">*</span>@endif
+                            {{ __('Resolution / note') }}
                         </label>
                         <textarea id="form-resolution" wire:model="form.resolution_note" rows="3"
                             class="mt-1.5 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"

@@ -65,10 +65,35 @@ class TaskList extends Component
 
     public function saveManage(): void
     {
-        $this->form->save($this->managing, auth()->id());
+        $this->form->save($this->managing);
         $this->closeManage();
         $this->dispatch('task-updated');
+        unset($this->counts);
         session()->flash('status', 'Task updated successfully.');
+    }
+
+    public function updateStatus(int $taskId, string $newStatus): void
+    {
+        $allowed = array_column(TaskStatus::cases(), 'value');
+
+        if (! in_array($newStatus, $allowed, true)) {
+            return;
+        }
+
+        $task = Task::findOrFail($taskId);
+
+        if ($task->status->value === $newStatus) {
+            return;
+        }
+
+        $isCompleted = $newStatus === TaskStatus::Completed->value;
+
+        $task->update([
+            'status' => $newStatus,
+            'completed_at' => $isCompleted ? ($task->completed_at ?? now()) : null,
+        ]);
+
+        unset($this->counts);
     }
 
     #[Computed]

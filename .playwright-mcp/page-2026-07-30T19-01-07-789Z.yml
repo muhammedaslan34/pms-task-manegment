@@ -1,0 +1,50 @@
+- generic [active] [ref=f9e1]:
+  - banner [ref=f9e2]:
+    - generic [ref=f9e3]:
+      - link "TaskFlow" [ref=f9e4] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=f9e9]:
+        - link "إرسال مهمة" [ref=f9e10] [cursor=pointer]:
+          - /url: /
+        - link "لوحة التحكم" [ref=f9e11] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/admin/tasks
+        - generic [ref=f9e12]: Support Admin
+        - button "تسجيل الخروج" [ref=f9e14]
+  - main [ref=f9e16]:
+    - generic [ref=f9e17]:
+      - generic [ref=f9e18]:
+        - generic [ref=f9e19]:
+          - heading "المستخدمون" [level=1] [ref=f9e20]
+          - paragraph [ref=f9e21]: إدارة حسابات فريق الدعم.
+        - button "مستخدم جديد" [ref=f9e22]
+      - searchbox "ابحث بالاسم أو البريد الإلكتروني..." [ref=f9e28]
+      - table [ref=f9e31]:
+        - rowgroup [ref=f9e32]:
+          - row [ref=f9e33]:
+            - columnheader "الاسم" [ref=f9e34]
+            - columnheader "البريد الإلكتروني" [ref=f9e35]
+            - columnheader "تاريخ الإنشاء" [ref=f9e36]
+            - columnheader "إجراءات" [ref=f9e37]
+        - rowgroup [ref=f9e38]:
+          - row [ref=f9e39]:
+            - cell "J Jane Support" [ref=f9e40]:
+              - generic [ref=f9e41]:
+                - generic [ref=f9e42]: J
+                - generic [ref=f9e43]: Jane Support
+            - cell "jane@taskflow.test" [ref=f9e44]
+            - cell "2026/07/30" [ref=f9e45]
+            - cell [ref=f9e46]:
+              - generic [ref=f9e47]:
+                - button "تعديل" [ref=f9e48]
+                - button "حذف" [ref=f9e49]
+          - row [ref=f9e50]:
+            - cell "S Support Admin أنت" [ref=f9e51]:
+              - generic [ref=f9e52]:
+                - generic [ref=f9e53]: S
+                - generic [ref=f9e54]: Support Admin أنت
+            - cell "admin@taskflow.test" [ref=f9e55]
+            - cell "2026/07/30" [ref=f9e56]
+            - cell [ref=f9e57]:
+              - generic [ref=f9e58]:
+                - button "تعديل" [ref=f9e59]
+                - button "حذف" [disabled] [ref=f9e60]

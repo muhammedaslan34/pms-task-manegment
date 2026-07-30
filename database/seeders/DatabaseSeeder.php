@@ -7,18 +7,22 @@ use App\Enums\TaskStatus;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Delete existing seed data first so re-running `db:seed` resets cleanly.
+        $this->truncate();
+
         $admin = User::factory()->create([
             'name' => 'Support Admin',
             'email' => 'admin@taskflow.test',
             'password' => bcrypt('password'),
         ]);
 
-        $support2 = User::factory()->create([
+        User::factory()->create([
             'name' => 'Jane Support',
             'email' => 'jane@taskflow.test',
             'password' => bcrypt('password'),
@@ -41,7 +45,6 @@ class DatabaseSeeder extends Seeder
             'priority' => Priority::Medium,
             'status' => TaskStatus::InProgress,
             'submitted_by' => 'ops@example.com',
-            'assigned_to' => $admin->id,
         ]);
 
         Task::create([
@@ -51,13 +54,29 @@ class DatabaseSeeder extends Seeder
             'priority' => Priority::Low,
             'status' => TaskStatus::Completed,
             'submitted_by' => 'marketing@example.com',
-            'assigned_to' => $support2->id,
-            'resolution_note' => 'Replaced hardcoded year with Blade {{ date(\'Y\') }} helper across layouts.',
+            'resolution_note' => 'Replaced hardcoded year with Blade date helper across layouts.',
             'completed_at' => now()->subDays(2),
             'created_at' => now()->subDays(4),
         ]);
 
         // Extra random tasks for a fuller table
         Task::factory()->count(12)->create();
+    }
+
+    /**
+     * Delete all existing tasks and users before seeding.
+     */
+    public function truncate(): void
+    {
+        Task::query()->delete();
+        User::query()->delete();
+
+        // Reset auto-increment counters so IDs start fresh.
+        if (DB::getDriverName() === 'sqlite') {
+            DB::statement("DELETE FROM sqlite_sequence WHERE name IN ('tasks', 'users')");
+        } else {
+            DB::statement('ALTER TABLE tasks AUTO_INCREMENT = 1');
+            DB::statement('ALTER TABLE users AUTO_INCREMENT = 1');
+        }
     }
 }

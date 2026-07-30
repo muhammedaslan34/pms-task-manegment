@@ -17,7 +17,7 @@ class TaskShow extends Component
 
     public function mount(Task $task): void
     {
-        $this->task = $task->load('assignee');
+        $this->task = $task;
         $this->form->setTask($task);
     }
 
@@ -34,7 +34,6 @@ class TaskShow extends Component
     public function setInProgress(): void
     {
         $this->form->status = TaskStatus::InProgress->value;
-        $this->form->assign_to_me = true;
         $this->save();
     }
 
@@ -58,8 +57,8 @@ class TaskShow extends Component
 
     public function save(): void
     {
-        $this->form->save($this->task, auth()->id());
-        $this->task->refresh()->load('assignee');
+        $this->form->save($this->task);
+        $this->task->refresh();
         $this->form->setTask($this->task);
         $this->confirmOpen = false;
         session()->flash('status', 'Task updated.');

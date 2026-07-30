@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Enums\Priority;
 use App\Enums\TaskStatus;
 use App\Models\Task;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class TaskFactory extends Factory
@@ -38,7 +37,6 @@ class TaskFactory extends Factory
             'priority' => fake()->randomElement(Priority::cases()),
             'status' => $status,
             'submitted_by' => fake()->optional(0.7)->email(),
-            'assigned_to' => $status !== TaskStatus::Pending ? User::factory() : null,
             'resolution_note' => $status === TaskStatus::Completed ? fake()->sentence() : null,
             'completed_at' => $status === TaskStatus::Completed ? fake()->dateTimeBetween('-7 days') : null,
             'created_at' => fake()->dateTimeBetween('-30 days'),

@@ -4,6 +4,7 @@ use App\Livewire\Admin\TaskList;
 use App\Livewire\Admin\TaskShow;
 use App\Livewire\Admin\Users\Index as UsersIndex;
 use App\Livewire\Auth\Login;
+use App\Livewire\Auth\Register;
 use App\Livewire\Tasks\Create;
 use Illuminate\Support\Facades\Route;
 
@@ -11,6 +12,7 @@ Route::get('/', Create::class)->name('home');
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', Login::class)->name('login');
+    Route::get('/register', Register::class)->name('register');
 });
 
 Route::post('/logout', function () {

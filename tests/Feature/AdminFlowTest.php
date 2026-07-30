@@ -28,14 +28,14 @@ class AdminFlowTest extends TestCase
         $this->assertSame('in_progress', $task->fresh()->status->value);
     }
 
-    public function test_selecting_completed_without_note_opens_confirm_modal(): void
+    public function test_selecting_completed_opens_confirm_modal(): void
     {
         $user = User::factory()->create();
         $task = Task::factory()->create(['status' => 'pending']);
 
         Livewire::actingAs($user)
             ->test(TaskShow::class, ['task' => $task])
-            ->set('form.status', 'completed')
+            ->call('markCompleted')
             ->assertSet('confirmOpen', true);
 
         $this->assertSame('pending', $task->fresh()->status->value);
@@ -84,5 +84,19 @@ class AdminFlowTest extends TestCase
             ->call('destroy');
 
         $this->assertDatabaseHas('users', ['id' => $admin->id]);
+    }
+
+    public function test_register_creates_and_logs_in_user(): void
+    {
+        Livewire::test(\App\Livewire\Auth\Register::class)
+            ->set('name', 'New Member')
+            ->set('email', 'new@test.com')
+            ->set('password', 'secret123')
+            ->set('password_confirmation', 'secret123')
+            ->call('register')
+            ->assertHasNoErrors()
+            ->assertRedirect(route('admin.tasks.index'));
+
+        $this->assertDatabaseHas('users', ['email' => 'new@test.com']);
     }
 }

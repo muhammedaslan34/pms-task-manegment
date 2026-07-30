@@ -1,0 +1,183 @@
+- generic [active] [ref=f7e1]:
+  - banner [ref=f7e2]:
+    - generic [ref=f7e3]:
+      - link "TaskFlow" [ref=f7e4] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=f7e9]:
+        - link "إرسال مهمة" [ref=f7e10] [cursor=pointer]:
+          - /url: /
+        - link "لوحة التحكم" [ref=f7e11] [cursor=pointer]:
+          - /url: http://127.0.0.1:8000/admin/tasks
+        - generic [ref=f7e12]: Support Admin
+        - button "تسجيل الخروج" [ref=f7e14]
+  - main [ref=f7e16]:
+    - generic [ref=f7e17]:
+      - generic [ref=f7e18]:
+        - heading "لوحة المهام" [level=1] [ref=f7e19]
+        - paragraph [ref=f7e20]: راجع المهام الواردة واعمل عليها وأغلقها.
+      - generic [ref=f7e21]:
+        - generic [ref=f7e24]:
+          - paragraph [ref=f7e25]: قيد الانتظار
+          - paragraph [ref=f7e26]: "3"
+          - paragraph [ref=f7e27]: مهام
+        - generic [ref=f7e33]:
+          - paragraph [ref=f7e34]: قيد التنفيذ
+          - paragraph [ref=f7e35]: "3"
+          - paragraph [ref=f7e36]: مهام
+        - generic [ref=f7e42]:
+          - paragraph [ref=f7e43]: مكتملة
+          - paragraph [ref=f7e44]: "9"
+          - paragraph [ref=f7e45]: مهام
+      - generic [ref=f7e49]:
+        - textbox "ابحث في المهام..." [ref=f7e51]
+        - generic [ref=f7e52]:
+          - combobox [ref=f7e53]:
+            - option "كل الأولويات" [selected]
+            - option "منخفضة"
+            - option "متوسطة"
+            - option "عالية"
+          - combobox [ref=f7e54]:
+            - option "كل الحالات" [selected]
+            - option "قيد الانتظار"
+            - option "قيد التنفيذ"
+            - option "مكتملة"
+      - table [ref=f7e57]:
+        - rowgroup [ref=f7e58]:
+          - row [ref=f7e59]:
+            - columnheader [ref=f7e60]:
+              - button "المهمة" [ref=f7e61]
+            - columnheader "الأولوية" [ref=f7e62]
+            - columnheader "الحالة" [ref=f7e63]
+            - columnheader "المُسند إليه" [ref=f7e64]
+            - columnheader [ref=f7e65]:
+              - button "أُبلغ عنها ▼" [ref=f7e66]
+            - columnheader "إجراءات" [ref=f7e67]
+        - rowgroup [ref=f7e68]:
+          - row [ref=f7e69]:
+            - cell [ref=f7e70]:
+              - link "Checkout button unresponsive on mobile Safari https://shop.example.com/checkout" [ref=f7e71] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/1
+                - text: Checkout button unresponsive on mobile Safari
+                - generic [ref=f7e72]: https://shop.example.com/checkout
+            - cell "عالية" [ref=f7e73]
+            - cell "مكتملة" [ref=f7e75]
+            - cell "—" [ref=f7e77]
+            - cell "منذ 27 دقيقة" [ref=f7e78]
+            - cell [ref=f7e79]:
+              - button "إدارة" [ref=f7e80]
+          - row [ref=f7e81]:
+            - cell [ref=f7e82]:
+              - link "Dashboard charts overlap on narrow screens https://app.example.com/dashboard" [ref=f7e83] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/2
+                - text: Dashboard charts overlap on narrow screens
+                - generic [ref=f7e84]: https://app.example.com/dashboard
+            - cell "متوسطة" [ref=f7e85]
+            - cell "مكتملة" [ref=f7e87]
+            - cell "Support Admin" [ref=f7e89]
+            - cell "منذ 27 دقيقة" [ref=f7e90]
+            - cell [ref=f7e91]:
+              - button "إدارة" [ref=f7e92]
+          - row [ref=f7e93]:
+            - cell [ref=f7e94]:
+              - link "Footer year shows 2024 https://example.com" [ref=f7e95] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/3
+                - text: Footer year shows 2024
+                - generic [ref=f7e96]: https://example.com
+            - cell "منخفضة" [ref=f7e97]
+            - cell "مكتملة" [ref=f7e99]
+            - cell "Jane Support" [ref=f7e101]
+            - cell "منذ 4 أيام" [ref=f7e102]
+            - cell [ref=f7e103]:
+              - button "إدارة" [ref=f7e104]
+          - row [ref=f7e105]:
+            - cell [ref=f7e106]:
+              - link "Cart total shows wrong amount https://example.com/login" [ref=f7e107] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/14
+                - text: Cart total shows wrong amount
+                - generic [ref=f7e108]: https://example.com/login
+            - cell "منخفضة" [ref=f7e109]
+            - cell "قيد التنفيذ" [ref=f7e111]
+            - cell "Baby Krajcik II" [ref=f7e113]
+            - cell "منذ 4 أيام" [ref=f7e114]
+            - cell [ref=f7e115]:
+              - button "إدارة" [ref=f7e116]
+          - row [ref=f7e117]:
+            - cell [ref=f7e118]:
+              - link "Login button not working https://example.com/products/42" [ref=f7e119] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/4
+                - text: Login button not working
+                - generic [ref=f7e120]: https://example.com/products/42
+            - cell "متوسطة" [ref=f7e121]
+            - cell "مكتملة" [ref=f7e123]
+            - cell "Fay Sipes" [ref=f7e125]
+            - cell "منذ أسبوع" [ref=f7e126]
+            - cell [ref=f7e127]:
+              - button "إدارة" [ref=f7e128]
+          - row [ref=f7e129]:
+            - cell [ref=f7e130]:
+              - link "Login button not working https://example.com/cart" [ref=f7e131] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/9
+                - text: Login button not working
+                - generic [ref=f7e132]: https://example.com/cart
+            - cell "متوسطة" [ref=f7e133]
+            - cell "قيد التنفيذ" [ref=f7e135]
+            - cell "Herman Beahan III" [ref=f7e137]
+            - cell "منذ أسبوع" [ref=f7e138]
+            - cell [ref=f7e139]:
+              - button "إدارة" [ref=f7e140]
+          - row [ref=f7e141]:
+            - cell [ref=f7e142]:
+              - link "Profile photo upload fails https://example.com/checkout" [ref=f7e143] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/11
+                - text: Profile photo upload fails
+                - generic [ref=f7e144]: https://example.com/checkout
+            - cell "متوسطة" [ref=f7e145]
+            - cell "قيد الانتظار" [ref=f7e147]
+            - cell "—" [ref=f7e149]
+            - cell "منذ أسبوعين" [ref=f7e150]
+            - cell [ref=f7e151]:
+              - button "إدارة" [ref=f7e152]
+          - row [ref=f7e153]:
+            - cell [ref=f7e154]:
+              - link "Login button not working https://app.example.com/dashboard" [ref=f7e155] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/12
+                - text: Login button not working
+                - generic [ref=f7e156]: https://app.example.com/dashboard
+            - cell "متوسطة" [ref=f7e157]
+            - cell "مكتملة" [ref=f7e159]
+            - cell "Dr. Monserrate Boyle" [ref=f7e161]
+            - cell "منذ أسبوعين" [ref=f7e162]
+            - cell [ref=f7e163]:
+              - button "إدارة" [ref=f7e164]
+          - row [ref=f7e165]:
+            - cell [ref=f7e166]:
+              - link "Login button not working https://app.example.com/dashboard" [ref=f7e167] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/10
+                - text: Login button not working
+                - generic [ref=f7e168]: https://app.example.com/dashboard
+            - cell "متوسطة" [ref=f7e169]
+            - cell "مكتملة" [ref=f7e171]
+            - cell "Wiley Welch" [ref=f7e173]
+            - cell "منذ أسبوعين" [ref=f7e174]
+            - cell [ref=f7e175]:
+              - button "إدارة" [ref=f7e176]
+          - row [ref=f7e177]:
+            - cell [ref=f7e178]:
+              - link "Profile photo upload fails https://example.com/cart" [ref=f7e179] [cursor=pointer]:
+                - /url: http://127.0.0.1:8000/admin/tasks/5
+                - text: Profile photo upload fails
+                - generic [ref=f7e180]: https://example.com/cart
+            - cell "متوسطة" [ref=f7e181]
+            - cell "قيد الانتظار" [ref=f7e183]
+            - cell "—" [ref=f7e185]
+            - cell "منذ أسبوعين" [ref=f7e186]
+            - cell [ref=f7e187]:
+              - button "إدارة" [ref=f7e188]
+      - navigation "Pagination Navigation" [ref=f7e191]:
+        - generic [ref=f7e192]:
+          - paragraph [ref=f7e194]: Showing 1 to 10 of 15 results
+          - generic [ref=f7e196]:
+            - generic "&laquo; السابق" [ref=f7e198]
+            - generic [ref=f7e202]: "1"
+            - button "Go to page 2" [ref=f7e206]: "2"
+            - button "التالي &raquo;" [ref=f7e208]

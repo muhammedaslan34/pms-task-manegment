@@ -41,7 +41,12 @@
         </button>
     </form>
 
-    <p class="mt-4 text-center text-xs text-slate-400">
+    <p class="mt-4 text-center text-sm text-slate-500">
+        {{ __("Don't have an account?") }}
+        <a href="{{ route('register') }}" class="font-medium text-blue-600 hover:underline">{{ __('Register') }}</a>
+    </p>
+
+    <p class="mt-2 text-center text-xs text-slate-400">
         {{ __('Demo admin') }} &mdash; <code class="rounded bg-slate-100 px-1 py-0.5">admin@taskflow.test</code> /
         <code class="rounded bg-slate-100 px-1 py-0.5">password</code>
     </p>
