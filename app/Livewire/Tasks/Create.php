@@ -19,7 +19,7 @@ class Create extends Component
     public string $submitted_by = '';
     public string $priority = 'medium';
 
-    public $screenshot = null;
+    public array $screenshots = [];
 
     public function mount(): void
     {
@@ -36,39 +36,40 @@ class Create extends Component
             'description' => ['nullable', 'string', 'max:5000'],
             'submitted_by' => ['nullable', 'email', 'max:255'],
             'priority' => ['required', 'in:' . implode(',', array_column(Priority::cases(), 'value'))],
-            'screenshot' => ['nullable', 'image', 'max:10240'],
+            'screenshots.*' => ['nullable', 'image', 'max:10240'],
         ];
     }
 
-    public function updatedScreenshot(): void
+    public function updatedScreenshots(): void
     {
-        $this->validateOnly('screenshot');
+        $this->validateOnly('screenshots.*');
     }
 
-    public function removeScreenshot(): void
+    public function removeScreenshot(int $index): void
     {
-        $this->screenshot = null;
+        unset($this->screenshots[$index]);
+        $this->screenshots = array_values($this->screenshots);
     }
 
     public function save(): void
     {
         $validated = $this->validate();
 
-        $path = null;
-        if ($this->screenshot) {
-            $path = $this->screenshot->store('screenshots', 'public');
-        }
-
-        Task::create([
+        $task = Task::create([
             'title' => $validated['title'],
             'page_link' => $validated['page_link'] ?: null,
             'description' => $validated['description'] ?: null,
             'submitted_by' => $validated['submitted_by'] ?: null,
             'priority' => $validated['priority'],
-            'screenshot_path' => $path,
         ]);
 
-        $this->reset(['title', 'page_link', 'description', 'submitted_by', 'priority', 'screenshot']);
+        foreach ($validated['screenshots'] ?? [] as $file) {
+            $task->images()->create([
+                'path' => $file->store('screenshots', 'public'),
+            ]);
+        }
+
+        $this->reset(['title', 'page_link', 'description', 'submitted_by', 'priority', 'screenshots']);
         $this->priority = 'medium';
         if (Auth::check()) {
             $this->submitted_by = Auth::user()->email;

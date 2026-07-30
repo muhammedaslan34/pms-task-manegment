@@ -50,13 +50,17 @@
                     </div>
                 @endif
 
-                @if ($task->screenshotUrl())
+                @if ($task->images->isNotEmpty())
                     <div class="mt-6">
-                        <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ __('Screenshot') }}</h2>
-                        <a href="{{ $task->screenshotUrl() }}" target="_blank" rel="noopener" class="mt-2 block">
-                            <img src="{{ $task->screenshotUrl() }}" alt="{{ __('Screenshot') }}"
-                                class="max-h-96 rounded-xl border border-slate-200 shadow-sm">
-                        </a>
+                        <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ __('Screenshots') }}</h2>
+                        <div class="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                            @foreach ($task->images as $image)
+                                <a href="{{ $image->imageUrl() }}" target="_blank" rel="noopener" class="block overflow-hidden rounded-xl border border-slate-200">
+                                    <img src="{{ $image->imageUrl() }}" alt="{{ __('Screenshot') }}"
+                                        class="h-32 w-full object-cover transition hover:opacity-90">
+                                </a>
+                            @endforeach
+                        </div>
                     </div>
                 @endif
 

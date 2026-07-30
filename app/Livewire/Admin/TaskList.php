@@ -105,7 +105,7 @@ class TaskList extends Component
 
     public function openManage(Task $task): void
     {
-        $this->managing = $task;
+        $this->managing = $task->loadMissing('images');
         $this->form->setTask($task);
         $this->manageModalOpen = true;
     }
@@ -144,7 +144,6 @@ class TaskList extends Component
 
         $task->update([
             'status' => $newStatus,
-            'assigned_to' => auth()->id(),
             'completed_at' => $isCompleted ? ($task->completed_at ?? now()) : null,
         ]);
 
@@ -165,7 +164,7 @@ class TaskList extends Component
     public function render()
     {
         return view('livewire.admin.task-list', [
-            'tasks' => $this->taskQuery()->with('assignee')->paginate($this->perPage),
+            'tasks' => $this->taskQuery()->paginate($this->perPage),
         ])
             ->layout('components.layouts.app')
             ->title('Task Dashboard');

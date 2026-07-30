@@ -26,12 +26,10 @@ class TaskStatusForm extends Form
         ]);
 
         $isCompleted = $this->status === TaskStatus::Completed->value;
-        $statusChanged = $task->status->value !== $this->status;
 
         $task->update([
             'status' => $this->status,
             'resolution_note' => $this->resolution_note ?: null,
-            'assigned_to' => $statusChanged ? auth()->id() : $task->assigned_to,
             'completed_at' => $isCompleted ? ($task->completed_at ?? now()) : null,
         ]);
     }

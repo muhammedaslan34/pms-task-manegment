@@ -73,7 +73,7 @@
                 </div>
 
                 <div>
-                    <span class="block text-sm font-medium text-slate-700">{{ __('Screenshot') }}</span>
+                    <span class="block text-sm font-medium text-slate-700">{{ __('Screenshots') }}</span>
                     <div
                         x-data="pasteScreenshot()"
                         x-init="init()"
@@ -81,25 +81,28 @@
                         @drop.prevent="handleDrop($event)"
                         @dragover.prevent="$el.classList.add('border-blue-400', 'bg-blue-50')"
                         @dragleave.prevent="$el.classList.remove('border-blue-400', 'bg-blue-50')"
-                        class="mt-3 cursor-pointer rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-8 text-center transition hover:border-blue-400 hover:bg-blue-50/50"
+                        class="mt-3 cursor-pointer rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 p-6 text-center transition hover:border-blue-400 hover:bg-blue-50/50"
                         @click="$refs.fileInput.click()">
 
-                        <input type="file" x-ref="fileInput" wire:model="screenshot" accept="image/*"
+                        <input type="file" x-ref="fileInput" wire:model="screenshots" accept="image/*" multiple
                             class="hidden" />
 
-                        @if ($screenshot)
-                            <div class="space-y-3">
-                                <img src="{{ $screenshot->temporaryUrl() }}" alt="{{ __('Preview') }}"
-                                    class="mx-auto max-h-64 rounded-lg shadow-sm">
-                                <button type="button" wire:click="removeScreenshot"
-                                    @click.stop
-                                    class="inline-flex items-center gap-1.5 rounded-lg bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-100">
-                                    <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
-                                    {{ __('Remove screenshot') }}
-                                </button>
+                        @if (count($screenshots))
+                            <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                                @foreach ($screenshots as $index => $screenshot)
+                                    <div class="group relative overflow-hidden rounded-lg border border-slate-200 bg-white">
+                                        <img src="{{ $screenshot->temporaryUrl() }}" alt="{{ __('Preview') }}"
+                                            class="mx-auto h-32 w-full object-cover">
+                                        <button type="button" wire:click="removeScreenshot({{ $index }})" @click.stop
+                                            class="absolute end-1.5 top-1.5 inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-red-600 shadow-sm opacity-0 transition hover:bg-red-50 group-hover:opacity-100">
+                                            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                @endforeach
                             </div>
+                            <p class="mt-3 text-xs text-slate-500">{{ count($screenshots) }} {{ __('image(s) selected') }}</p>
                         @else
                             <svg class="mx-auto h-11 w-11 text-blue-500" viewBox="0 0 24 24" fill="none"
                                 stroke="currentColor" stroke-width="1.5">
@@ -111,10 +114,10 @@
                                 <span class="font-semibold">{{ __('paste from clipboard') }}</span>،
                                 {{ __('or drag & drop') }}
                             </p>
-                            <p class="mt-1.5 text-xs text-slate-400">{{ __('PNG, JPG, GIF up to 10MB') }}</p>
+                            <p class="mt-1.5 text-xs text-slate-400">{{ __('Multiple images allowed. PNG, JPG, GIF up to 10MB each.') }}</p>
                         @endif
                     </div>
-                    @error('screenshot')
+                    @error('screenshots.*')
                         <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>
@@ -166,31 +169,41 @@
         function pasteScreenshot() {
             return {
                 init() {},
-                pushFile(file) {
-                    if (!file || !file.type.startsWith('image/')) return;
+                appendFiles(newFiles) {
                     const input = this.$refs.fileInput;
                     const dt = new DataTransfer();
-                    dt.items.add(file);
+                    // keep files already in the input so new ones are added on top
+                    for (const existing of input.files) {
+                        dt.items.add(existing);
+                    }
+                    for (const file of newFiles) {
+                        if (file && file.type.startsWith('image/')) {
+                            dt.items.add(file);
+                        }
+                    }
                     input.files = dt.files;
                     input.dispatchEvent(new Event('change', { bubbles: true }));
                 },
                 handlePaste(e) {
                     const items = e.clipboardData?.items;
                     if (!items) return;
+                    const files = [];
                     for (const item of items) {
                         if (item.type.startsWith('image/')) {
                             const file = item.getAsFile();
-                            if (file) {
-                                e.preventDefault();
-                                this.pushFile(file);
-                                break;
-                            }
+                            if (file) files.push(file);
                         }
+                    }
+                    if (files.length) {
+                        e.preventDefault();
+                        this.appendFiles(files);
                     }
                 },
                 handleDrop(e) {
-                    const file = e.dataTransfer?.files?.[0];
-                    if (file) this.pushFile(file);
+                    const dropped = e.dataTransfer?.files ? Array.from(e.dataTransfer.files) : [];
+                    if (dropped.length) {
+                        this.appendFiles(dropped);
+                    }
                 },
             }
         }

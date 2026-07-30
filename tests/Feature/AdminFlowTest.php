@@ -8,6 +8,7 @@ use App\Livewire\Forms\UserForm;
 use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -131,5 +132,24 @@ class AdminFlowTest extends TestCase
 
         $this->assertDatabaseHas('users', ['id' => $admin->id]);
         $this->assertDatabaseMissing('users', ['id' => $other->id]);
+    }
+
+    public function test_submission_saves_multiple_images(): void
+    {
+        Storage::fake('public');
+
+        $png = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==');
+        $a = \Illuminate\Http\UploadedFile::fake()->createWithContent('shot1.png', $png);
+        $b = \Illuminate\Http\UploadedFile::fake()->createWithContent('shot2.png', $png);
+
+        Livewire::test(\App\Livewire\Tasks\Create::class)
+            ->set('title', 'Multi image bug')
+            ->set('screenshots', [$a, $b])
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $task = Task::where('title', 'Multi image bug')->first();
+        $this->assertNotNull($task);
+        $this->assertCount(2, $task->images);
     }
 }

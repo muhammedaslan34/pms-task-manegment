@@ -172,7 +172,6 @@
                         </th>
                         <th class="hidden px-4 py-3 lg:table-cell">{{ __('Priority') }}</th>
                         <th class="px-4 py-3">{{ __('Status') }}</th>
-                        <th class="hidden px-4 py-3 md:table-cell">{{ __('Changed by') }}</th>
                         <th class="px-4 py-3">
                             <button wire:click="sort('created_at')" class="flex items-center gap-1 hover:text-slate-700">
                                 {{ __('Reported') }} @if ($sortBy === 'created_at'){{ $sortDir === 'asc' ? '▲' : '▼' }}@endif
@@ -203,14 +202,42 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div
-                                    x-data="{ open: false }"
+                                    x-data="{
+                                        open: false,
+                                        style: '',
+                                        toggle() {
+                                            this.open = ! this.open;
+                                            if (this.open) {
+                                                this.$nextTick(() => this.place());
+                                            }
+                                        },
+                                        place() {
+                                            const btn = this.$refs.btn;
+                                            if (! btn) return;
+
+                                            const r = btn.getBoundingClientRect();
+                                            const menuH = 140;
+                                            const menuW = Math.max(r.width, 176);
+                                            const gap = 6;
+                                            const openUp = (window.innerHeight - r.bottom) < (menuH + gap + 8);
+                                            const top = openUp ? Math.max(8, r.top - menuH - gap) : (r.bottom + gap);
+                                            let left = r.left;
+                                            if (left + menuW > window.innerWidth - 8) {
+                                                left = Math.max(8, r.right - menuW);
+                                            }
+                                            this.style = `position:fixed;top:${top}px;left:${left}px;width:${menuW}px;z-index:80;`;
+                                        },
+                                    }"
                                     @click.outside="open = false"
                                     @keydown.escape.window="open = false"
+                                    @scroll.window="if (open) place()"
+                                    @resize.window="if (open) place()"
                                     class="relative inline-block min-w-[8.5rem]"
                                     wire:key="status-{{ $task->id }}-{{ $task->status->value }}">
                                     <button
                                         type="button"
-                                        @click="open = !open"
+                                        x-ref="btn"
+                                        @click="toggle()"
                                         class="inline-flex w-full items-center justify-between gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-medium ring-1 transition hover:opacity-90 {{ $task->status->color() }}">
                                         <span>{{ $task->status->label() }}</span>
                                         <svg class="h-3.5 w-3.5 opacity-60" viewBox="0 0 20 20" fill="currentColor">
@@ -218,29 +245,29 @@
                                         </svg>
                                     </button>
 
-                                    <div
-                                        x-show="open"
-                                        x-transition.opacity.duration.100ms
-                                        x-cloak
-                                        class="absolute start-0 z-20 mt-1 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white py-1 shadow-lg">
-                                        @foreach (App\Enums\TaskStatus::cases() as $s)
-                                            <button
-                                                type="button"
-                                                wire:click="updateStatus({{ $task->id }}, '{{ $s->value }}')"
-                                                @click="open = false"
-                                                class="flex w-full items-center gap-2 px-3 py-2 text-start text-xs font-medium text-slate-700 transition hover:bg-slate-50 {{ $task->status === $s ? 'bg-slate-50' : '' }}">
-                                                <span class="inline-flex h-2 w-2 flex-none rounded-full {{
-                                                    $s === App\Enums\TaskStatus::Pending ? 'bg-slate-400' :
-                                                    ($s === App\Enums\TaskStatus::InProgress ? 'bg-blue-500' : 'bg-emerald-500')
-                                                }}"></span>
-                                                {{ $s->label() }}
-                                            </button>
-                                        @endforeach
-                                    </div>
+                                    <template x-teleport="body">
+                                        <div
+                                            x-show="open"
+                                            x-transition.opacity.duration.100ms
+                                            x-cloak
+                                            :style="style"
+                                            class="rounded-xl border border-slate-200 bg-white py-1 shadow-lg ring-1 ring-black/5">
+                                            @foreach (App\Enums\TaskStatus::cases() as $s)
+                                                <button
+                                                    type="button"
+                                                    wire:click="updateStatus({{ $task->id }}, '{{ $s->value }}')"
+                                                    @click="open = false"
+                                                    class="flex w-full items-center gap-2 px-3 py-2 text-start text-xs font-medium text-slate-700 transition hover:bg-slate-50 {{ $task->status === $s ? 'bg-slate-50' : '' }}">
+                                                    <span class="inline-flex h-2 w-2 flex-none rounded-full {{
+                                                        $s === App\Enums\TaskStatus::Pending ? 'bg-slate-400' :
+                                                        ($s === App\Enums\TaskStatus::InProgress ? 'bg-blue-500' : 'bg-emerald-500')
+                                                    }}"></span>
+                                                    {{ $s->label() }}
+                                                </button>
+                                            @endforeach
+                                        </div>
+                                    </template>
                                 </div>
-                            </td>
-                            <td class="hidden px-4 py-3 text-slate-600 md:table-cell">
-                                {{ $task->assignee?->name ?? '—' }}
                             </td>
                             <td class="px-4 py-3 text-slate-500">
                                 {{ $task->created_at->diffForHumans() }}
@@ -304,13 +331,17 @@
                         </div>
                     @endif
 
-                    @if ($managing->screenshotUrl())
+                    @if ($managing->images->isNotEmpty())
                         <div>
-                            <span class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ __('Screenshot') }}</span>
-                            <a href="{{ $managing->screenshotUrl() }}" target="_blank" rel="noopener" class="mt-1 block">
-                                <img src="{{ $managing->screenshotUrl() }}" alt="{{ __('Screenshot') }}"
-                                    class="max-h-56 rounded-lg border border-slate-200">
-                            </a>
+                            <span class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ __('Screenshots') }}</span>
+                            <div class="mt-1 grid grid-cols-3 gap-2">
+                                @foreach ($managing->images as $image)
+                                    <a href="{{ $image->imageUrl() }}" target="_blank" rel="noopener" class="block overflow-hidden rounded-lg border border-slate-200">
+                                        <img src="{{ $image->imageUrl() }}" alt="{{ __('Screenshot') }}"
+                                            class="h-24 w-full object-cover">
+                                    </a>
+                                @endforeach
+                            </div>
                         </div>
                     @endif
 

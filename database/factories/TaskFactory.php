@@ -33,7 +33,6 @@ class TaskFactory extends Factory
                 'https://example.com/checkout',
             ]),
             'description' => fake()->paragraph(),
-            'screenshot_path' => null,
             'priority' => fake()->randomElement(Priority::cases()),
             'status' => $status,
             'submitted_by' => fake()->optional(0.7)->email(),

@@ -6,6 +6,7 @@ use App\Enums\Priority;
 use App\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Task extends Model
 {
@@ -15,11 +16,9 @@ class Task extends Model
         'title',
         'page_link',
         'description',
-        'screenshot_path',
         'priority',
         'status',
         'submitted_by',
-        'assigned_to',
         'resolution_note',
         'completed_at',
     ];
@@ -33,15 +32,13 @@ class Task extends Model
         ];
     }
 
-    public function assignee()
+    public function images(): HasMany
     {
-        return $this->belongsTo(User::class, 'assigned_to');
+        return $this->hasMany(TaskImage::class);
     }
 
-    public function screenshotUrl(): ?string
+    public function hasImages(): bool
     {
-        return $this->screenshot_path
-            ? asset('storage/' . $this->screenshot_path)
-            : null;
+        return $this->relationLoaded('images') ? $this->images->isNotEmpty() : $this->images()->exists();
     }
 }
