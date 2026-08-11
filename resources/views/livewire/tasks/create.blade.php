@@ -56,12 +56,9 @@
                             class="text-red-500">*</span></span>
                     <div class="mt-3 grid grid-cols-3 gap-3">
                         @foreach (App\Enums\Priority::cases() as $priorityOption)
-                            <label
-                                class="flex cursor-pointer items-center justify-center rounded-lg border px-3 py-3 text-sm font-medium transition {{
-                                    $priority === $priorityOption->value
-                                        ? 'border-blue-800 bg-blue-50 text-blue-800 ring-1 ring-blue-800'
-                                        : 'border-slate-200 text-slate-600 hover:border-slate-300' }}">
-                                <input type="radio" wire:model="priority" value="{{ $priorityOption->value }}"
+                            <label wire:key="priority-{{ $priorityOption->value }}"
+                                class="flex cursor-pointer items-center justify-center rounded-lg border border-slate-200 px-3 py-3 text-sm font-medium text-slate-600 transition hover:border-slate-300 has-[:checked]:border-blue-800 has-[:checked]:bg-blue-50 has-[:checked]:text-blue-800 has-[:checked]:ring-1 has-[:checked]:ring-blue-800">
+                                <input type="radio" wire:model.live="priority" value="{{ $priorityOption->value }}"
                                     class="sr-only">
                                 {{ $priorityOption->label() }}
                             </label>

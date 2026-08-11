@@ -134,6 +134,22 @@ class AdminFlowTest extends TestCase
         $this->assertDatabaseMissing('users', ['id' => $other->id]);
     }
 
+    public function test_priority_can_be_changed(): void
+    {
+        Livewire::test(\App\Livewire\Tasks\Create::class)
+            ->assertSet('priority', 'medium')
+            ->set('priority', 'high')
+            ->assertSet('priority', 'high')
+            ->set('title', 'High priority bug')
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseHas('tasks', [
+            'title' => 'High priority bug',
+            'priority' => 'high',
+        ]);
+    }
+
     public function test_submission_saves_multiple_images(): void
     {
         Storage::fake('public');
