@@ -75,7 +75,7 @@ class TelegramPoll extends Command
             try {
                 $bot->getUpdates($offset, 0);
             } catch (TelegramException) {
-                // Worst case the batch is replayed; status changes are idempotent.
+                // The batch will be redelivered; TelegramUpdateHandler skips update ids it already handled.
             }
         }
 

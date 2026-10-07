@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\TaskStatus;
 use App\Models\Task;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -20,6 +21,9 @@ class TelegramUpdateHandler
 {
     private const OPEN_TASKS_LIMIT = 15;
 
+    /** Telegram keeps undelivered updates for 24 hours, so remembering ids that long covers any redelivery. */
+    private const HANDLED_UPDATE_TTL_HOURS = 24;
+
     public function __construct(
         private readonly TelegramBot $bot,
         private readonly TaskTelegramNotifier $notifier,
@@ -28,11 +32,35 @@ class TelegramUpdateHandler
 
     public function handle(array $update): void
     {
+        if (! $this->claimUpdate($update['update_id'] ?? null)) {
+            return;
+        }
+
         if (isset($update['callback_query']) && is_array($update['callback_query'])) {
             $this->handleCallbackQuery($update['callback_query']);
         } elseif (isset($update['message']) && is_array($update['message'])) {
             $this->handleMessage($update['message']);
         }
+    }
+
+    /**
+     * Mark an update as handled; false when it was already handled. A redelivered
+     * update (webhook retry, or a poll batch whose confirmation failed) must not
+     * re-apply an old button press over a status changed since then.
+     */
+    private function claimUpdate(mixed $updateId): bool
+    {
+        if (! is_int($updateId)) {
+            return true;
+        }
+
+        if (Cache::add("telegram:update:{$updateId}", true, now()->addHours(self::HANDLED_UPDATE_TTL_HOURS))) {
+            return true;
+        }
+
+        Log::info('Telegram: skipped an already handled update.', ['update_id' => $updateId]);
+
+        return false;
     }
 
     private function isOwnerChat(mixed $chatId): bool

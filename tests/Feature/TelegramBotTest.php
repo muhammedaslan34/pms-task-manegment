@@ -267,6 +267,25 @@ class TelegramBotTest extends TestCase
         });
     }
 
+    public function test_a_redelivered_button_press_does_not_override_a_newer_status(): void
+    {
+        $this->fakeTelegram();
+        $task = Task::factory()->create(['status' => TaskStatus::Pending, 'completed_at' => null]);
+        $update = $this->callbackUpdate($task, 'in_progress');
+
+        $this->postWebhook($update)->assertOk();
+        $this->assertSame(TaskStatus::InProgress, $task->fresh()->status);
+
+        // Completed from the dashboard, then Telegram redelivers the same update.
+        $task->fresh()->setStatus(TaskStatus::Completed, 'Done from the dashboard');
+        $this->postWebhook($update)->assertOk();
+
+        $task->refresh();
+        $this->assertSame(TaskStatus::Completed, $task->status);
+        $this->assertNotNull($task->completed_at);
+        Http::assertSentCount(2); // answerCallbackQuery + editMessageText for the first delivery only
+    }
+
     public function test_button_press_from_another_chat_is_ignored(): void
     {
         $this->fakeTelegram();
@@ -299,7 +318,7 @@ class TelegramBotTest extends TestCase
         $open = Task::factory()->create(['status' => TaskStatus::InProgress, 'title' => 'Open one']);
         Task::factory()->create(['status' => TaskStatus::Completed, 'title' => 'Closed one']);
 
-        $message = fn (string $chatId) => ['update_id' => 7, 'message' => [
+        $message = fn (string $chatId) => ['update_id' => (int) $chatId % 1000, 'message' => [
             'message_id' => 9, 'date' => time(), 'text' => '/tasks', 'chat' => ['id' => (int) $chatId, 'type' => 'private'],
         ]];
 
