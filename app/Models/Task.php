@@ -37,6 +37,15 @@ class Task extends Model
         return $this->hasMany(TaskImage::class);
     }
 
+    public function setStatus(TaskStatus $status, ?string $resolutionNote = null): void
+    {
+        $this->update([
+            'status' => $status,
+            'resolution_note' => $resolutionNote ?? $this->resolution_note,
+            'completed_at' => $status === TaskStatus::Completed ? ($this->completed_at ?? now()) : null,
+        ]);
+    }
+
     public function hasImages(): bool
     {
         return $this->relationLoaded('images') ? $this->images->isNotEmpty() : $this->images()->exists();

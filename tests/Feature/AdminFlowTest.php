@@ -119,6 +119,26 @@ class AdminFlowTest extends TestCase
         $this->assertDatabaseHas('tasks', ['id' => $keep->id]);
     }
 
+    public function test_manage_modal_action_buttons_change_status(): void
+    {
+        $user = User::factory()->create();
+        $task = Task::factory()->create(['status' => 'pending']);
+
+        Livewire::actingAs($user)
+            ->test(\App\Livewire\Admin\TaskList::class)
+            ->call('openManage', $task->id)
+            ->assertSee(__('Start working'))
+            ->assertSee(__('Mark as completed'))
+            ->set('form.resolution_note', 'Fixed the layout')
+            ->call('setManagingStatus', 'completed')
+            ->assertSet('manageModalOpen', false);
+
+        $task->refresh();
+        $this->assertSame('completed', $task->status->value);
+        $this->assertSame('Fixed the layout', $task->resolution_note);
+        $this->assertNotNull($task->completed_at);
+    }
+
     public function test_bulk_deletes_selected_users_but_not_self(): void
     {
         $admin = User::factory()->create();

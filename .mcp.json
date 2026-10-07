@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "tasks": {
+      "command": "php",
+      "args": ["artisan", "mcp:start", "tasks"]
+    }
+  }
+}
