@@ -32,11 +32,13 @@
                 <a href="/"
                     class="rounded-lg px-3 py-2 font-medium text-slate-600 transition hover:bg-blue-50 hover:text-brand-primary">{{ __('Submit Task') }}</a>
                 @if (auth()->check())
-                    <a href="{{ route('admin.tasks.index') }}"
-                        class="rounded-lg px-3 py-2 font-medium text-slate-600 transition hover:bg-blue-50 hover:text-brand-primary">{{ __('Dashboard') }}</a>
+                    <a href="{{ route('admin.tasks.index') }}" @if (request()->routeIs('admin.tasks.*')) aria-current="page" @endif
+                        class="rounded-lg px-3 py-2 font-medium transition {{ request()->routeIs('admin.tasks.*') ? 'bg-blue-50 text-brand-primary' : 'text-slate-600 hover:bg-blue-50 hover:text-brand-primary' }}">{{ __('Dashboard') }}</a>
+                    <a href="{{ route('admin.mcp') }}" @if (request()->routeIs('admin.mcp')) aria-current="page" @endif
+                        class="rounded-lg px-3 py-2 font-medium transition {{ request()->routeIs('admin.mcp') ? 'bg-blue-50 text-brand-primary' : 'text-slate-600 hover:bg-blue-50 hover:text-brand-primary' }}">{{ __('AI agents (MCP)') }}</a>
                     @if (auth()->user()->isAdmin())
-                        <a href="{{ route('admin.users.index') }}"
-                            class="rounded-lg px-3 py-2 font-medium text-slate-600 transition hover:bg-blue-50 hover:text-brand-primary">{{ __('Users') }}</a>
+                        <a href="{{ route('admin.users.index') }}" @if (request()->routeIs('admin.users.*')) aria-current="page" @endif
+                            class="rounded-lg px-3 py-2 font-medium transition {{ request()->routeIs('admin.users.*') ? 'bg-blue-50 text-brand-primary' : 'text-slate-600 hover:bg-blue-50 hover:text-brand-primary' }}">{{ __('Users') }}</a>
                     @endif
                     <span class="rounded-lg bg-slate-100 px-3 py-2 text-slate-700">{{ auth()->user()->name }}</span>
                     <form method="POST" action="{{ route('logout') }}">

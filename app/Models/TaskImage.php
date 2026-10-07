@@ -49,10 +49,25 @@ class TaskImage extends Model
         };
     }
 
+    /**
+     * Browser URL for the screenshot: a pre-signed, expiring bucket URL when the
+     * disk supports it (private E2/S3 bucket), otherwise the auth-only proxy route.
+     */
     public function imageUrl(): string
     {
         if (config('filesystems.screenshots_public_url')) {
             return rtrim(config('filesystems.screenshots_public_url'), '/').'/'.$this->path;
+        }
+
+        if (config('filesystems.disks.'.config('filesystems.screenshots_disk').'.driver') === 's3') {
+            try {
+                return static::disk()->temporaryUrl(
+                    $this->path,
+                    now()->addMinutes((int) config('filesystems.screenshots_url_ttl', 60)),
+                );
+            } catch (\Throwable $exception) {
+                report($exception);
+            }
         }
 
         return route('task-images.show', $this);

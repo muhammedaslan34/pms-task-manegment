@@ -33,13 +33,20 @@ return [
     | users are actually retrieved out of your database or other storage
     | system used by the application. Typically, Eloquent is utilized.
     |
-    | Supported: "session"
+    | Supported: "session", "passport"
     |
     */
 
     'guards' => [
         'web' => [
             'driver' => 'session',
+            'provider' => 'users',
+        ],
+
+        // Bearer-token guard (Laravel Passport) protecting the HTTP MCP endpoint /mcp/tasks.
+        // Accepts OAuth access tokens (Claude Code, Codex, Cursor, ...) and personal access tokens.
+        'api' => [
+            'driver' => 'passport',
             'provider' => 'users',
         ],
     ],
