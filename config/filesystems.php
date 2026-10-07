@@ -17,6 +17,30 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Task Screenshot Disk
+    |--------------------------------------------------------------------------
+    |
+    | Disk used for task screenshot uploads. Set SCREENSHOTS_DISK=s3 in .env to
+    | store files on S3 or S3-compatible storage (e.g. iDrive E2).
+    |
+    */
+
+    'screenshots_disk' => env('SCREENSHOTS_DISK', 'public'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Task Screenshot Public URL
+    |--------------------------------------------------------------------------
+    |
+    | When set (e.g. https://u0s6.fra3.idrivee2-53.com/task-hotelme), image links
+    | use direct object URLs. Leave empty to serve via /media/task-images/{id}.
+    |
+    */
+
+    'screenshots_public_url' => env('SCREENSHOTS_PUBLIC_URL'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |
@@ -56,7 +80,7 @@ return [
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
-            'throw' => false,
+            'throw' => true,
             'report' => false,
         ],
 

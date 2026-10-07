@@ -3,9 +3,13 @@
 namespace App\Livewire\Tasks;
 
 use App\Enums\Priority;
+use App\Events\TaskSubmitted;
 use App\Models\Task;
+use App\Models\TaskImage;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -55,19 +59,43 @@ class Create extends Component
     {
         $validated = $this->validate();
 
-        $task = Task::create([
-            'title' => $validated['title'],
-            'page_link' => $validated['page_link'] ?: null,
-            'description' => $validated['description'] ?: null,
-            'submitted_by' => $validated['submitted_by'] ?: null,
-            'priority' => $validated['priority'],
-        ]);
+        try {
+            $paths = $this->storeScreenshots($validated['screenshots'] ?? []);
+        } catch (\Throwable $exception) {
+            report($exception);
+            $this->addError('screenshots.upload', __('We could not upload your screenshots. Please try again.'));
 
-        foreach ($validated['screenshots'] ?? [] as $file) {
-            $task->images()->create([
-                'path' => $file->store('screenshots', 'public'),
-            ]);
+            return;
         }
+
+        try {
+            $task = DB::transaction(function () use ($validated, $paths) {
+                $task = Task::create([
+                    'title' => $validated['title'],
+                    'page_link' => $validated['page_link'] ?: null,
+                    'description' => $validated['description'] ?: null,
+                    'submitted_by' => $validated['submitted_by'] ?: null,
+                    'priority' => $validated['priority'],
+                ]);
+
+                foreach ($paths as $path) {
+                    $task->images()->create(['path' => $path]);
+                }
+
+                return $task;
+            });
+        } catch (\Throwable $exception) {
+            $this->deleteStoredScreenshots($paths);
+
+            throw $exception;
+        }
+
+        // The screenshots now live only on the screenshots disk; drop Livewire's temporary copies.
+        foreach ($validated['screenshots'] ?? [] as $file) {
+            rescue(fn () => $file->delete(), report: false);
+        }
+
+        TaskSubmitted::dispatch($task);
 
         $this->reset(['title', 'page_link', 'description', 'submitted_by', 'priority', 'screenshots']);
         $this->priority = 'medium';
@@ -77,6 +105,52 @@ class Create extends Component
 
         $this->dispatch('task-submitted');
         session()->flash('status', 'Your task has been submitted. Our support team will review it shortly.');
+    }
+
+    /**
+     * Upload each screenshot straight to the configured screenshots disk (no local copy).
+     * If any upload fails, the ones already uploaded are removed and the error is rethrown.
+     *
+     * @param  array<int, \Livewire\Features\SupportFileUploads\TemporaryUploadedFile>  $files
+     * @return list<string>
+     */
+    private function storeScreenshots(array $files): array
+    {
+        $disk = config('filesystems.screenshots_disk');
+        $paths = [];
+
+        try {
+            foreach ($files as $file) {
+                $extension = strtolower($file->extension() ?: $file->getClientOriginalExtension() ?: 'png');
+                $path = $file->storeAs('screenshots', Str::uuid()->toString().'.'.$extension, $disk);
+
+                if (! is_string($path) || $path === '') {
+                    throw new \RuntimeException("Failed to store screenshot on [{$disk}] disk.");
+                }
+
+                $paths[] = $path;
+            }
+        } catch (\Throwable $exception) {
+            $this->deleteStoredScreenshots($paths);
+
+            throw $exception;
+        }
+
+        return $paths;
+    }
+
+    /** @param  list<string>  $paths */
+    private function deleteStoredScreenshots(array $paths): void
+    {
+        if ($paths === []) {
+            return;
+        }
+
+        try {
+            TaskImage::disk()->delete($paths);
+        } catch (\Throwable $exception) {
+            report($exception);
+        }
     }
 
     public function render()

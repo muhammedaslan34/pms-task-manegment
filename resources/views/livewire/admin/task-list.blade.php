@@ -302,43 +302,52 @@
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4" x-data>
             <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm" wire:click="closeManage"></div>
 
-            <div class="relative w-full max-w-lg rounded-2xl bg-white shadow-xl">
-                <div class="flex items-start justify-between border-b border-slate-200 px-6 py-4">
-                    <div>
-                        <h2 class="text-lg font-semibold text-slate-900">{{ $managing->title }}</h2>
-                        <p class="mt-0.5 text-xs text-slate-500">{{ __('Reported :time', ['time' => $managing->created_at->diffForHumans()]) }}</p>
+            <div class="relative flex max-h-[92vh] w-full max-w-4xl flex-col rounded-2xl bg-white shadow-xl">
+                <div class="flex items-start justify-between gap-4 border-b border-slate-200 px-6 py-5 sm:px-8">
+                    <div class="min-w-0">
+                        <h2 class="text-xl font-semibold text-slate-900 sm:text-2xl">{{ $managing->title }}</h2>
+                        <div class="mt-2 flex flex-wrap items-center gap-2 text-sm text-slate-500">
+                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-medium ring-1 {{ $managing->status->color() }}">
+                                {{ $managing->status->label() }}
+                            </span>
+                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-sm font-medium ring-1 {{ $managing->priority->color() }}">
+                                {{ $managing->priority->label() }}
+                            </span>
+                            <span>{{ __('Reported :time', ['time' => $managing->created_at->diffForHumans()]) }}</span>
+                        </div>
                     </div>
-                    <button wire:click="closeManage" class="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
-                        <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <button wire:click="closeManage" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
+                        <svg class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
                         </svg>
                     </button>
                 </div>
 
-                <form wire:submit="saveManage" class="max-h-[70vh] space-y-4 overflow-y-auto px-6 py-5">
+                <form wire:submit="saveManage" class="flex-1 space-y-6 overflow-y-auto px-6 py-6 sm:px-8">
                     @if ($managing->description)
                         <div>
-                            <span class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ __('Description') }}</span>
-                            <p class="mt-1 whitespace-pre-wrap text-sm text-slate-700">{{ $managing->description }}</p>
+                            <span class="text-sm font-semibold uppercase tracking-wide text-slate-400">{{ __('Description') }}</span>
+                            <p class="mt-2 whitespace-pre-wrap text-base leading-relaxed text-slate-700">{{ $managing->description }}</p>
                         </div>
                     @endif
 
                     @if ($managing->page_link)
                         <div>
-                            <span class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ __('Page link') }}</span>
+                            <span class="text-sm font-semibold uppercase tracking-wide text-slate-400">{{ __('Page link') }}</span>
                             <a href="{{ $managing->page_link }}" target="_blank" rel="noopener"
-                                class="mt-1 block break-all text-sm text-blue-600 hover:underline">{{ $managing->page_link }}</a>
+                                class="mt-2 block break-all text-base text-blue-600 hover:underline">{{ $managing->page_link }}</a>
                         </div>
                     @endif
 
                     @if ($managing->images->isNotEmpty())
                         <div>
-                            <span class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ __('Screenshots') }}</span>
-                            <div class="mt-1 grid grid-cols-3 gap-2">
+                            <span class="text-sm font-semibold uppercase tracking-wide text-slate-400">{{ __('Screenshots') }}</span>
+                            <div @class(['mt-2 grid gap-4', 'sm:grid-cols-2' => $managing->images->count() > 1])>
                                 @foreach ($managing->images as $image)
-                                    <a href="{{ $image->imageUrl() }}" target="_blank" rel="noopener" class="block overflow-hidden rounded-lg border border-slate-200">
+                                    <a href="{{ $image->imageUrl() }}" target="_blank" rel="noopener"
+                                        class="block overflow-hidden rounded-xl border border-slate-200 bg-slate-50 transition hover:border-blue-300">
                                         <img src="{{ $image->imageUrl() }}" alt="{{ __('Screenshot') }}"
-                                            class="h-24 w-full object-cover">
+                                            class="max-h-[28rem] w-full object-contain">
                                     </a>
                                 @endforeach
                             </div>
@@ -348,11 +357,11 @@
                     <hr class="border-slate-100">
 
                     <div>
-                        <label for="form-resolution" class="block text-sm font-medium text-slate-700">
+                        <label for="form-resolution" class="block text-base font-medium text-slate-700">
                             {{ __('Resolution / note') }}
                         </label>
-                        <textarea id="form-resolution" wire:model="form.resolution_note" rows="3"
-                            class="mt-1.5 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                        <textarea id="form-resolution" wire:model="form.resolution_note" rows="4"
+                            class="mt-2 block w-full rounded-lg border-slate-300 text-base shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             placeholder="{{ __('Describe what you did to resolve this task...') }}"></textarea>
                         @error('form.resolution_note')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
@@ -360,13 +369,38 @@
                     </div>
                 </form>
 
-                <div class="flex items-center justify-end gap-3 border-t border-slate-200 px-6 py-4">
-                    <button wire:click="closeManage"
-                        class="rounded-lg px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100">{{ __('Cancel') }}</button>
-                    <button wire:click="saveManage"
-                        class="rounded-lg bg-blue-800 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-900">
-                        {{ __('Save changes') }}
-                    </button>
+                <div class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 px-6 py-4 sm:px-8">
+                    <div class="flex flex-wrap items-center gap-2">
+                        @if ($managing->status === App\Enums\TaskStatus::Pending)
+                            <button wire:click="setManagingStatus('in_progress')" wire:loading.attr="disabled"
+                                class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-base font-semibold text-white hover:bg-blue-700 disabled:opacity-50">
+                                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M6.3 2.84A1 1 0 005 3.73v12.54a1 1 0 001.5.87l10-6.27a1 1 0 000-1.74l-10-6.29z" /></svg>
+                                {{ __('Start working') }}
+                            </button>
+                        @endif
+
+                        @if ($managing->status !== App\Enums\TaskStatus::Completed)
+                            <button wire:click="setManagingStatus('completed')" wire:loading.attr="disabled"
+                                class="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5 text-base font-semibold text-white hover:bg-emerald-700 disabled:opacity-50">
+                                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-8 8a1 1 0 01-1.4 0l-4-4a1 1 0 011.4-1.4L8 12.6l7.3-7.3a1 1 0 011.4 0z" clip-rule="evenodd" /></svg>
+                                {{ __('Mark as completed') }}
+                            </button>
+                        @else
+                            <button wire:click="setManagingStatus('pending')" wire:loading.attr="disabled"
+                                class="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2.5 text-base font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50">
+                                {{ __('Reopen task') }}
+                            </button>
+                        @endif
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button wire:click="closeManage"
+                            class="rounded-lg px-4 py-2.5 text-base font-medium text-slate-600 hover:bg-slate-100">{{ __('Cancel') }}</button>
+                        <button wire:click="saveManage"
+                            class="rounded-lg bg-blue-800 px-5 py-2.5 text-base font-semibold text-white shadow-sm transition hover:bg-blue-900">
+                            {{ __('Save changes') }}
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

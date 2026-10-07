@@ -126,6 +126,12 @@ class TaskList extends Component
         session()->flash('status', 'Task updated successfully.');
     }
 
+    public function setManagingStatus(string $status): void
+    {
+        $this->form->status = $status;
+        $this->saveManage();
+    }
+
     public function updateStatus(int $taskId, string $newStatus): void
     {
         $allowed = array_column(TaskStatus::cases(), 'value');

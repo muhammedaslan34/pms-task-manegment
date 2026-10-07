@@ -35,4 +35,15 @@ return [
         ],
     ],
 
+    'telegram' => [
+        'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+        // The owner's chat: receives notifications and is the only chat allowed to press the buttons.
+        'chat_id' => env('TELEGRAM_CHAT_ID'),
+        // Sent by Telegram in the X-Telegram-Bot-Api-Secret-Token header on every webhook call.
+        'webhook_secret' => env('TELEGRAM_WEBHOOK_SECRET'),
+        // Language of the bot's messages (labels come from lang/*.json).
+        'locale' => env('TELEGRAM_LOCALE', 'en'),
+        'api_url' => env('TELEGRAM_API_URL', 'https://api.telegram.org'),
+    ],
+
 ];
