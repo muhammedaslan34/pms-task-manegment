@@ -123,4 +123,20 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Initial Admin
+    |--------------------------------------------------------------------------
+    |
+    | Used by `php artisan app:ensure-admin` to create the first admin on a
+    | fresh deploy. Existing users are never modified.
+    |
+    */
+
+    'admin' => [
+        'email' => env('ADMIN_EMAIL'),
+        'name' => env('ADMIN_NAME', 'Admin'),
+        'password' => env('ADMIN_PASSWORD'),
+    ],
+
 ];
