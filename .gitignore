@@ -25,3 +25,4 @@ Thumbs.db
 /.claude
 /database/*.sqlite
 /database/*.sqlite-journal
+/.playwright-mcp

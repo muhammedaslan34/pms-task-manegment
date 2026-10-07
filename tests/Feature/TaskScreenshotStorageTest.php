@@ -89,14 +89,14 @@ class TaskScreenshotStorageTest extends TestCase
             ],
         ]);
         Storage::forgetDisk('s3');
-        $this->freezeTime();
 
         $image = Task::factory()->create()->images()->create(['path' => 'screenshots/abc.png']);
         $url = $image->imageUrl();
 
         $this->assertStringStartsWith('https://e2.example.test/test-bucket/screenshots/abc.png?', $url);
         $this->assertStringContainsString('X-Amz-Signature=', $url);
-        $this->assertStringContainsString('X-Amz-Expires=3600', $url);
+        // The SDK subtracts the real clock from the expiry, so allow a one-second tick.
+        $this->assertMatchesRegularExpression('/X-Amz-Expires=(3599|3600)(&|$)/', $url);
     }
 
     public function test_image_url_falls_back_to_the_proxy_route_for_local_disks(): void
