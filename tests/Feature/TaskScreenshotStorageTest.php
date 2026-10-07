@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Livewire\Tasks\Create;
 use App\Models\Task;
 use App\Models\TaskImage;
+use App\Models\User;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -57,12 +58,54 @@ class TaskScreenshotStorageTest extends TestCase
 
         $image = Task::factory()->create()->images()->create(['path' => 'screenshots/abc.png']);
 
-        $response = $this->get(route('task-images.show', $image));
+        $response = $this->actingAs(User::factory()->create())->get(route('task-images.show', $image));
 
         $response->assertOk()
             ->assertHeader('Content-Type', 'image/png');
         $this->assertStringContainsString('max-age=31536000', $response->headers->get('Cache-Control'));
         $this->assertSame(base64_decode(self::PNG), $response->streamedContent());
+    }
+
+    public function test_image_route_requires_login(): void
+    {
+        Storage::fake('s3');
+        $image = Task::factory()->create()->images()->create(['path' => 'screenshots/abc.png']);
+
+        $this->get(route('task-images.show', $image))->assertRedirect(route('login'));
+    }
+
+    public function test_image_url_is_a_presigned_bucket_url_on_s3(): void
+    {
+        config([
+            'filesystems.screenshots_url_ttl' => 60,
+            'filesystems.disks.s3' => [
+                'driver' => 's3',
+                'key' => 'test-key',
+                'secret' => 'test-secret',
+                'region' => 'eu-central-2',
+                'bucket' => 'test-bucket',
+                'endpoint' => 'https://e2.example.test',
+                'use_path_style_endpoint' => true,
+            ],
+        ]);
+        Storage::forgetDisk('s3');
+        $this->freezeTime();
+
+        $image = Task::factory()->create()->images()->create(['path' => 'screenshots/abc.png']);
+        $url = $image->imageUrl();
+
+        $this->assertStringStartsWith('https://e2.example.test/test-bucket/screenshots/abc.png?', $url);
+        $this->assertStringContainsString('X-Amz-Signature=', $url);
+        $this->assertStringContainsString('X-Amz-Expires=3600', $url);
+    }
+
+    public function test_image_url_falls_back_to_the_proxy_route_for_local_disks(): void
+    {
+        config(['filesystems.screenshots_disk' => 'public']);
+        Storage::fake('public');
+
+        $image = Task::factory()->create()->images()->create(['path' => 'screenshots/abc.png']);
+
         $this->assertSame(route('task-images.show', $image), $image->imageUrl());
     }
 
@@ -72,7 +115,7 @@ class TaskScreenshotStorageTest extends TestCase
 
         $image = Task::factory()->create()->images()->create(['path' => 'screenshots/missing.png']);
 
-        $this->get(route('task-images.show', $image))->assertNotFound();
+        $this->actingAs(User::factory()->create())->get(route('task-images.show', $image))->assertNotFound();
     }
 
     public function test_failed_upload_does_not_create_a_task_or_image_row(): void

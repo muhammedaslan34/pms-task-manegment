@@ -32,6 +32,7 @@ Route::post('/logout', function () {
 })->name('logout')->middleware('auth');
 
 Route::get('/media/task-images/{taskImage}', TaskImageController::class)
+    ->middleware('auth')
     ->name('task-images.show');
 
 Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {

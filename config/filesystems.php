@@ -41,6 +41,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Task Screenshot Signed URL Lifetime
+    |--------------------------------------------------------------------------
+    |
+    | Minutes a pre-signed bucket URL stays valid. Pages generate fresh URLs on
+    | every render, so this only limits how long a copied link keeps working.
+    |
+    */
+
+    'screenshots_url_ttl' => (int) env('SCREENSHOTS_URL_TTL', 60),
+
+    /*
+    |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |
