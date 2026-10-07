@@ -55,9 +55,16 @@
                         <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-400">{{ __('Screenshots') }}</h2>
                         <div class="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
                             @foreach ($task->images as $image)
-                                <a href="{{ $image->imageUrl() }}" target="_blank" rel="noopener" class="block overflow-hidden rounded-xl border border-slate-200">
-                                    <img src="{{ $image->imageUrl() }}" alt="{{ __('Screenshot') }}"
+                                @php($url = $image->imageUrl())
+                                <a href="{{ $url }}" target="_blank" rel="noopener" x-data="{ broken: false }"
+                                    class="block overflow-hidden rounded-xl border border-slate-200">
+                                    <img src="{{ $url }}" alt="{{ __('Screenshot') }}" x-show="! broken" x-on:error="broken = true"
+                                        x-init="if ($el.complete && ! $el.naturalWidth) broken = true"
                                         class="h-32 w-full object-cover transition hover:opacity-90">
+                                    <span x-show="broken" x-cloak
+                                        class="flex h-32 w-full items-center justify-center bg-slate-50 p-2 text-center text-xs text-slate-400">
+                                        {{ __('Screenshot unavailable') }}
+                                    </span>
                                 </a>
                             @endforeach
                         </div>

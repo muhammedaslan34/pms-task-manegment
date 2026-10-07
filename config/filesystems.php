@@ -29,6 +29,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Task Screenshot Directory
+    |--------------------------------------------------------------------------
+    |
+    | Folder (object key prefix) new screenshots are stored under. Give local
+    | development its own prefix (e.g. local/screenshots) when it shares the
+    | production bucket, so test uploads never mix with real ones.
+    |
+    */
+
+    'screenshots_directory' => trim(env('SCREENSHOTS_DIRECTORY', 'screenshots'), '/'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Task Screenshot Public URL
     |--------------------------------------------------------------------------
     |

@@ -51,6 +51,23 @@ class TaskScreenshotStorageTest extends TestCase
         $this->assertSame([], Storage::disk('public')->allFiles());
     }
 
+    public function test_screenshots_are_stored_under_the_configured_directory(): void
+    {
+        Storage::fake('s3');
+        config(['filesystems.screenshots_directory' => 'local/screenshots']);
+
+        Livewire::test(Create::class)
+            ->set('title', 'Local upload')
+            ->set('screenshots', [$this->screenshot()])
+            ->call('save')
+            ->assertHasNoErrors();
+
+        $image = Task::where('title', 'Local upload')->firstOrFail()->images()->sole();
+
+        $this->assertMatchesRegularExpression('#^local/screenshots/[0-9a-f-]{36}\.png$#', $image->path);
+        Storage::disk('s3')->assertExists($image->path);
+    }
+
     public function test_image_route_streams_the_file_from_the_screenshots_disk(): void
     {
         Storage::fake('s3');

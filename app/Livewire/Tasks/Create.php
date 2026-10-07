@@ -122,7 +122,11 @@ class Create extends Component
         try {
             foreach ($files as $file) {
                 $extension = strtolower($file->extension() ?: $file->getClientOriginalExtension() ?: 'png');
-                $path = $file->storeAs('screenshots', Str::uuid()->toString().'.'.$extension, $disk);
+                $path = $file->storeAs(
+                    config('filesystems.screenshots_directory'),
+                    Str::uuid()->toString().'.'.$extension,
+                    $disk,
+                );
 
                 if (! is_string($path) || $path === '') {
                     throw new \RuntimeException("Failed to store screenshot on [{$disk}] disk.");

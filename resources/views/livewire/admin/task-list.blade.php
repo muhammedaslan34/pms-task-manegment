@@ -316,7 +316,7 @@
                             <span>{{ __('Reported :time', ['time' => $managing->created_at->diffForHumans()]) }}</span>
                         </div>
                     </div>
-                    <button wire:click="closeManage" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
+                    <button type="button" wire:click="closeManage" aria-label="{{ __('Close') }}" class="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600">
                         <svg class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
                         </svg>
@@ -344,10 +344,16 @@
                             <span class="text-sm font-semibold uppercase tracking-wide text-slate-400">{{ __('Screenshots') }}</span>
                             <div @class(['mt-2 grid gap-4', 'sm:grid-cols-2' => $managing->images->count() > 1])>
                                 @foreach ($managing->images as $image)
-                                    <a href="{{ $image->imageUrl() }}" target="_blank" rel="noopener"
+                                    @php($url = $image->imageUrl())
+                                    <a href="{{ $url }}" target="_blank" rel="noopener" x-data="{ broken: false }"
                                         class="block overflow-hidden rounded-xl border border-slate-200 bg-slate-50 transition hover:border-blue-300">
-                                        <img src="{{ $image->imageUrl() }}" alt="{{ __('Screenshot') }}"
+                                        <img src="{{ $url }}" alt="{{ __('Screenshot') }}" x-show="! broken" x-on:error="broken = true"
+                                        x-init="if ($el.complete && ! $el.naturalWidth) broken = true"
                                             class="max-h-[28rem] w-full object-contain">
+                                        <span x-show="broken" x-cloak
+                                            class="flex h-32 w-full items-center justify-center p-2 text-center text-xs text-slate-400">
+                                            {{ __('Screenshot unavailable') }}
+                                        </span>
                                     </a>
                                 @endforeach
                             </div>
