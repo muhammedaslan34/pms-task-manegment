@@ -4,6 +4,7 @@ namespace App\Mcp\Servers;
 
 use App\Mcp\Prompts\ImplementTask;
 use App\Mcp\Tools\CompleteTask;
+use App\Mcp\Tools\CreateTask;
 use App\Mcp\Tools\GetTask;
 use App\Mcp\Tools\ListTasks;
 use App\Mcp\Tools\StartTask;
@@ -28,6 +29,8 @@ Workflow for implementing a task:
 5. complete_task with a resolution_note describing what you changed (files, approach, how to verify).
 Only complete a task once the work is actually done. If you cannot finish it, use update_task_status
 to move it back to pending and explain why in the note.
+
+Use create_task to file a new task (e.g. copied from another TaskFlow instance), with its screenshots as https URLs.
 TEXT)]
 class TasksServer extends Server
 {
@@ -37,6 +40,7 @@ class TasksServer extends Server
         StartTask::class,
         CompleteTask::class,
         UpdateTaskStatus::class,
+        CreateTask::class,
     ];
 
     protected array $resources = [

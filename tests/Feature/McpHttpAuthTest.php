@@ -199,7 +199,7 @@ class McpHttpAuthTest extends TestCase
 
         $tools = $this->rpc('tools/list', id: 2)->assertOk();
         $this->assertSame(
-            ['complete_task', 'get_task', 'list_tasks', 'start_task', 'update_task_status'],
+            ['complete_task', 'create_task', 'get_task', 'list_tasks', 'start_task', 'update_task_status'],
             $this->toolNames($tools),
         );
 
@@ -235,7 +235,7 @@ class McpHttpAuthTest extends TestCase
         $bearer = ['Authorization' => 'Bearer '.$plain];
         $this->initialize($bearer)->assertOk();
         $this->assertNotNull($service->tokensFor($user)->firstWhere('name', 'Hermes agent')['last_used_at']);
-        $this->assertCount(5, $this->rpc('tools/list', [], $bearer, 2)->assertOk()->json('result.tools'));
+        $this->assertCount(6, $this->rpc('tools/list', [], $bearer, 2)->assertOk()->json('result.tools'));
 
         // Revoked tokens disappear from the list and are rejected.
         $service->revoke($user, $hermes['id']);
@@ -339,7 +339,7 @@ class McpHttpAuthTest extends TestCase
         $this->app['auth']->forgetGuards();
         $this->rpc('tools/list', [], ['Authorization' => 'Bearer '.$token['access_token']])
             ->assertOk()
-            ->assertJsonCount(5, 'result.tools');
+            ->assertJsonCount(6, 'result.tools');
 
         // The OAuth token is not a personal token.
         $this->assertCount(0, app(McpTokenService::class)->tokensFor($user));

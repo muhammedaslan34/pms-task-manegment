@@ -7,13 +7,17 @@ use App\Enums\TaskStatus;
 use App\Mcp\Prompts\ImplementTask;
 use App\Mcp\Servers\TasksServer;
 use App\Mcp\Tools\CompleteTask;
+use App\Mcp\Tools\CreateTask;
 use App\Mcp\Tools\GetTask;
 use App\Mcp\Tools\ListTasks;
 use App\Mcp\Tools\StartTask;
 use App\Mcp\Tools\UpdateTaskStatus;
+use App\Events\TaskSubmitted;
 use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Laravel\Mcp\Server\Testing\TestResponse;
 use Tests\TestCase;
@@ -206,6 +210,96 @@ class TasksMcpServerTest extends TestCase
         $this->assertSame('Reopened: the fix did not cover the mobile layout.', $task->resolution_note);
     }
 
+    public function test_create_task_stores_the_task_and_downloads_its_screenshots(): void
+    {
+        Storage::fake('public');
+        Event::fake([TaskSubmitted::class]);
+
+        $png = UploadedFile::fake()->image('shot.png', 20, 20)->getContent();
+        Http::fake([
+            '93.184.215.14/one.png*' => Http::response($png, 200, ['Content-Type' => 'image/png']),
+            '93.184.215.14/two*' => Http::response($png, 200, ['Content-Type' => 'application/octet-stream']),
+        ]);
+
+        $response = TasksServer::tool(CreateTask::class, [
+            'title' => 'Daily revenue report',
+            'description' => 'Add the search filters and table columns.',
+            'page_link' => 'https://example.com/reports/daily',
+            'priority' => 'high',
+            'submitted_by' => 'reporter@example.com',
+            'image_urls' => ['https://93.184.215.14/one.png?X-Amz-Signature=abc', 'https://93.184.215.14/two'],
+        ])->assertOk()->assertHasNoErrors();
+
+        $data = $this->decodeFirstText($response);
+        $task = Task::with('images')->findOrFail($data['task']['id']);
+
+        $this->assertSame('Daily revenue report', $task->title);
+        $this->assertSame(Priority::High, $task->priority);
+        $this->assertSame(TaskStatus::Pending, $task->status);
+        $this->assertSame('https://example.com/reports/daily', $task->page_link);
+        $this->assertCount(2, $task->images);
+        $this->assertSame(2, $data['task']['image_count']);
+        foreach ($task->images as $image) {
+            $this->assertStringStartsWith('screenshots/', $image->path);
+            $this->assertStringEndsWith('.png', $image->path);
+            $this->assertSame($png, Storage::disk('public')->get($image->path));
+        }
+        Event::assertDispatched(TaskSubmitted::class, fn (TaskSubmitted $event) => $event->task->is($task));
+    }
+
+    public function test_create_task_defaults_to_medium_and_can_skip_the_notification(): void
+    {
+        Event::fake([TaskSubmitted::class]);
+
+        $data = $this->decodeFirstText(
+            TasksServer::tool(CreateTask::class, ['title' => 'No screenshots', 'notify' => false])->assertOk()
+        );
+
+        $task = Task::findOrFail($data['task']['id']);
+        $this->assertSame(Priority::Medium, $task->priority);
+        $this->assertFalse($task->hasImages());
+        Event::assertNotDispatched(TaskSubmitted::class);
+    }
+
+    public function test_create_task_creates_nothing_when_a_screenshot_cannot_be_used(): void
+    {
+        Storage::fake('public');
+        Event::fake([TaskSubmitted::class]);
+
+        $png = UploadedFile::fake()->image('shot.png')->getContent();
+        Http::fake([
+            '93.184.215.14/ok.png' => Http::response($png, 200, ['Content-Type' => 'image/png']),
+            '93.184.215.14/page.html' => Http::response('<html></html>', 200, ['Content-Type' => 'text/html']),
+            '93.184.215.14/gone.png' => Http::response('', 404),
+        ]);
+
+        TasksServer::tool(CreateTask::class, [
+            'title' => 'Bad screenshot',
+            'image_urls' => ['https://93.184.215.14/ok.png', 'https://93.184.215.14/page.html'],
+        ])->assertHasErrors(['Screenshot 2 is not a png, jpg, gif or webp image.']);
+
+        TasksServer::tool(CreateTask::class, [
+            'title' => 'Missing screenshot',
+            'image_urls' => ['https://93.184.215.14/gone.png'],
+        ])->assertHasErrors(['Screenshot 1 could not be downloaded (HTTP 404).']);
+
+        TasksServer::tool(CreateTask::class, [
+            'title' => 'Internal screenshot',
+            'image_urls' => ['https://127.0.0.1/secret.png'],
+        ])->assertHasErrors(['is not a public address']);
+
+        TasksServer::tool(CreateTask::class, [
+            'title' => 'Plain http',
+            'image_urls' => ['http://93.184.215.14/ok.png'],
+        ])->assertHasErrors();
+
+        TasksServer::tool(CreateTask::class, ['title' => 'x'])->assertHasErrors();
+
+        $this->assertSame(0, Task::count());
+        $this->assertSame([], Storage::disk('public')->allFiles());
+        Event::assertNotDispatched(TaskSubmitted::class);
+    }
+
     public function test_server_exposes_the_expected_tools_and_prompt(): void
     {
         TasksServer::prompt(ImplementTask::class, ['id' => 7])
@@ -217,5 +311,6 @@ class TasksMcpServerTest extends TestCase
         $this->assertSame('start_task', (new StartTask)->name());
         $this->assertSame('complete_task', (new CompleteTask)->name());
         $this->assertSame('update_task_status', (new UpdateTaskStatus)->name());
+        $this->assertSame('create_task', (new CreateTask)->name());
     }
 }
